@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+  <Transactions>
+    <Transaction>2026.04.28 19:39:26.257,=C:\Users\Blinov\Documents\Embarcadero\Studio\Projects\Project1PCH1.h</Transaction>
+    <Transaction>2026.04.28 19:39:26.548,=C:\Users\Blinov\Documents\Embarcadero\Studio\Projects\Unit1.cpp</Transaction>
+    <Transaction>2026.04.28 20:04:29.568,C:\Users\Blinov\Desktop\бд\курсовая бд\Unit1.cpp=C:\Users\Blinov\Documents\Embarcadero\Studio\Projects\Unit1.cpp</Transaction>
+    <Transaction>2026.04.28 20:04:29.568,C:\Users\Blinov\Desktop\бд\курсовая бд\Unit1.h=C:\Users\Blinov\Documents\Embarcadero\Studio\Projects\Unit1.h</Transaction>
+    <Transaction>2026.04.28 20:04:29.568,C:\Users\Blinov\Desktop\бд\курсовая бд\Unit1.dfm=C:\Users\Blinov\Documents\Embarcadero\Studio\Projects\Unit1.dfm</Transaction>
+    <Transaction>2026.04.28 20:05:07.811,C:\Users\Blinov\Desktop\бд\курсовая бд\Project1PCH1.h=C:\Users\Blinov\Documents\Embarcadero\Studio\Projects\Project1PCH1.h</Transaction>
+    <Transaction>2026.04.28 20:05:07.879,C:\Users\Blinov\Desktop\бд\курсовая бд\Project1.cbproj=C:\Users\Blinov\Documents\Embarcadero\Studio\Projects\Project1.cbproj</Transaction>
+  </Transactions>
+</BorlandProject>
