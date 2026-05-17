@@ -179,6 +179,12 @@
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
     </PropertyGroup>
     <ItemGroup>
+        <CppCompile Include="edit.cpp">
+            <Form>Form2</Form>
+            <FormType>dfm</FormType>
+            <DependentOn>edit.h</DependentOn>
+            <BuildOrder>3</BuildOrder>
+        </CppCompile>
         <CppCompile Include="Project1.cpp">
             <BuildOrder>0</BuildOrder>
         </CppCompile>
@@ -193,6 +199,7 @@
             <BuildOrder>2</BuildOrder>
         </CppCompile>
         <FormResources Include="Unit1.dfm"/>
+        <FormResources Include="edit.dfm"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

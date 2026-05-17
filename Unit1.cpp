@@ -7,6 +7,7 @@
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
+#include "edit.h"
 TForm1 *Form1;
 //---------------------------------------------------------------------------
 __fastcall TForm1::TForm1(TComponent* Owner)
@@ -16,13 +17,11 @@ __fastcall TForm1::TForm1(TComponent* Owner)
 //---------------------------------------------------------------------------
 void __fastcall TForm1::ButtonDelEmplClick(TObject *Sender)
 {
-	if (MessageDlg("Удалить выбранного сотрудника?",mtConfirmation,TMsgDlgButtons() << mbYes << mbNo, 0) == mrYes)
+	if (Application->MessageBox(L"Удалить выбранного сотрудника?", L"Внимание", MB_YESNO | MB_ICONQUESTION) == mrYes)
 	{
         try
 		{
             ADOTableEmpl->Delete();
-
-			ShowMessage("Сотрудник удален.");
         }
         catch (Exception &e)
 		{
@@ -36,9 +35,9 @@ void __fastcall TForm1::ButtonDelEmplClick(TObject *Sender)
 void __fastcall TForm1::ButtonAcceptEmplClick(TObject *Sender)
 {
 	String sortField;
-    String filterField;
-    String filterText;
-    String sortType;
+	String filterField;
+	String filterText;
+	String sortType;
 
 	sortField = ComboBoxSortField->Text;
 
@@ -70,6 +69,40 @@ void __fastcall TForm1::ButtonAcceptEmplClick(TObject *Sender)
     {
         ADOTableEmpl->Filtered = false;
     }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::ButtonAddEmlClick(TObject *Sender)
+{
+ 	Form2->EditMode = false;
+
+    Form2->EditLastName->Clear();
+    Form2->EditFirstName->Clear();
+    Form2->EditMiddleName->Clear();
+
+    Form2->EditDepartmentId->Clear();
+    Form2->EditPositionId->Clear();
+    Form2->EditAddressId->Clear();
+
+    Form2->ShowModal();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::ButtonEditEmplClick(TObject *Sender)
+{
+	if (ADOTableEmpl->IsEmpty())
+        return;
+
+    Form2->EditMode = true;
+
+	Form2->EditLastName->Text = ADOTableEmpl->FieldByName("last_name")->AsString;
+	Form2->EditFirstName->Text = ADOTableEmpl->FieldByName("firtst_name")->AsString;
+	Form2->EditMiddleName->Text = ADOTableEmpl->FieldByName("middle_name")->AsString;
+	Form2->DateTimePickerBirthDate->Date = ADOTableEmpl->FieldByName("birth_date")->AsDateTime;
+	Form2->EditDepartmentId->Text = ADOTableEmpl->FieldByName("department_id")->AsString;
+	Form2->EditPositionId->Text = ADOTableEmpl->FieldByName("position_id")->AsString;
+	Form2->EditAddressId->Text = ADOTableEmpl->FieldByName("address_id")->AsString;
+	Form2->ShowModal();
 }
 //---------------------------------------------------------------------------
 

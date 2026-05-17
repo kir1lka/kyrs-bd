@@ -19,7 +19,6 @@ class TForm1 : public TForm
 __published:	// IDE-managed Components
 	TPageControl *PageControl1;
 	TTabSheet *TabSheet1;
-	TStatusBar *StatusBar1;
 	TTabSheet *TabSheet2;
 	TTabSheet *TabSheet3;
 	TDBGrid *DBGrid1;
@@ -52,6 +51,8 @@ __published:	// IDE-managed Components
 	TLabel *Label2;
 	void __fastcall ButtonDelEmplClick(TObject *Sender);
 	void __fastcall ButtonAcceptEmplClick(TObject *Sender);
+	void __fastcall ButtonAddEmlClick(TObject *Sender);
+	void __fastcall ButtonEditEmplClick(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
 	__fastcall TForm1(TComponent* Owner);
