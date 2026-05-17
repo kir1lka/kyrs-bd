@@ -26,12 +26,11 @@ __published:	// IDE-managed Components
 	TADOTable *ADOTableEmpl;
 	TDataSource *DataSourceEmpl;
 	TPanel *Panel1;
-	TButton *Button5;
-	TButton *Button6;
-	TButton *Button7;
-	TButton *Button8;
+	TButton *ButtonAddEml;
+	TButton *ButtonEditEmpl;
+	TButton *ButtonDelEmpl;
+	TButton *ButtonAcceptEmpl;
 	TPanel *Panel2;
-	TRadioGroup *RadioGroup1;
 	TGroupBox *GroupBox1;
 	TDBGrid *DBGrid2;
 	TADOTable *ADOTableProject;
@@ -44,6 +43,15 @@ __published:	// IDE-managed Components
 	TPanel *Panel4;
 	TPanel *Panel5;
 	TGroupBox *GroupBox2;
+	TComboBox *ComboBoxSortField;
+	TRadioButton *RadioButtonAsc;
+	TRadioButton *RadioButtonDesc;
+	TComboBox *ComboBoxFilterField;
+	TEdit *EditFilter;
+	TLabel *Label1;
+	TLabel *Label2;
+	void __fastcall ButtonDelEmplClick(TObject *Sender);
+	void __fastcall ButtonAcceptEmplClick(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
 	__fastcall TForm1(TComponent* Owner);
