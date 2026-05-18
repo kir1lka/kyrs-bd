@@ -322,11 +322,11 @@ object Form1: TForm1
     Top = 0
     Width = 820
     Height = 480
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     Align = alClient
     TabOrder = 0
-    ExplicitWidth = 821
-    ExplicitHeight = 459
+    ExplicitWidth = 814
+    ExplicitHeight = 463
     object TabSheet1: TTabSheet
       Caption = #1057#1086#1090#1088#1091#1076#1085#1080#1082#1080
       object DBGrid1: TDBGrid
@@ -409,8 +409,8 @@ object Form1: TForm1
         ParentShowHint = False
         ShowHint = True
         TabOrder = 1
-        ExplicitTop = 383
-        ExplicitWidth = 813
+        ExplicitTop = 387
+        ExplicitWidth = 806
         object ButtonAddEml: TButton
           Left = 2
           Top = 2
@@ -450,7 +450,7 @@ object Form1: TForm1
           Caption = #1055#1088#1080#1084#1077#1085#1080#1090#1100' '#1085#1072#1089#1090#1088#1086#1081#1082#1080
           TabOrder = 3
           OnClick = ButtonAcceptEmplClick
-          ExplicitLeft = 648
+          ExplicitLeft = 641
         end
       end
       object Panel2: TPanel
@@ -460,7 +460,7 @@ object Form1: TForm1
         Height = 97
         Align = alTop
         TabOrder = 2
-        ExplicitWidth = 813
+        ExplicitWidth = 806
         object GroupBox1: TGroupBox
           Left = 1
           Top = 1
@@ -472,8 +472,7 @@ object Form1: TForm1
           ParentBackground = False
           ParentColor = False
           TabOrder = 0
-          ExplicitLeft = 2
-          ExplicitTop = -4
+          ExplicitWidth = 804
           DesignSize = (
             810
             95)
@@ -567,101 +566,82 @@ object Form1: TForm1
         Width = 812
         Height = 137
         Align = alTop
-        DataSource = DataSourceProject
+        DataSource = DataSourceProjecParticipation
         TabOrder = 0
         TitleFont.Charset = DEFAULT_CHARSET
         TitleFont.Color = clWindowText
         TitleFont.Height = -12
         TitleFont.Name = 'Segoe UI'
         TitleFont.Style = []
+        OnCellClick = DBGrid2CellClick
         Columns = <
           item
             Expanded = False
-            FieldName = 'id'
-            Width = 50
+            FieldName = 'employee_id'
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'name'
-            Width = 550
+            FieldName = 'project_id'
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'start_date'
+            FieldName = 'role_id'
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'end_date'
+            FieldName = 'image_path'
             Visible = True
           end>
-      end
-      object Panel3: TPanel
-        Left = 0
-        Top = 404
-        Width = 812
-        Height = 46
-        Align = alBottom
-        BorderWidth = 1
-        ParentBackground = False
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 1
-        ExplicitTop = 383
-        ExplicitWidth = 813
-        object Button1: TButton
-          Left = 2
-          Top = 2
-          Width = 119
-          Height = 42
-          Align = alLeft
-          Caption = #1044#1086#1073#1072#1074#1080#1090#1100
-          TabOrder = 0
-        end
-        object Button2: TButton
-          Left = 121
-          Top = 2
-          Width = 119
-          Height = 42
-          Align = alLeft
-          Caption = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100
-          TabOrder = 1
-        end
-        object Button3: TButton
-          Left = 240
-          Top = 2
-          Width = 119
-          Height = 42
-          Align = alLeft
-          Caption = #1059#1076#1072#1083#1080#1090#1100
-          TabOrder = 2
-        end
-        object Button4: TButton
-          Left = 647
-          Top = 2
-          Width = 163
-          Height = 42
-          Align = alRight
-          Caption = #1055#1088#1080#1084#1077#1085#1080#1090#1100' '#1085#1072#1089#1090#1088#1086#1081#1082#1080
-          TabOrder = 3
-          ExplicitLeft = 648
-        end
       end
       object Panel4: TPanel
         Left = 0
         Top = 137
         Width = 812
-        Height = 267
+        Height = 313
         Align = alClient
-        Caption = 
-          #1090#1091#1090' '#1075#1088#1091#1073#1086' '#1075#1086#1074#1103#1088' '#1085#1072#1076#1086' '#1095#1091#1090' '#1082#1072' '#1087#1086#1076#1077#1083#1072#1090#1100' '#1073#1076' '#1080' '#1089#1076#1077#1083#1072#1090#1100' '#1078#1101#1090#1086' '#1082#1072#1082' '#1086#1082#1085#1086' ' +
-          #1082#1086#1090#1086#1088#1086#1077' '#1073#1091#1076#1077#1090' '#1074#1099#1074#1086#1076#1080#1090' '#1082#1072#1088#1090#1080#1085#1082#1091' '#1080' '#1087#1086#1076#1088#1086#1073#1085#1086#1089#1090#1080' '#1087#1088#1086#1077#1082#1090#1072' '#1082#1086#1075#1076#1072' '#1074#1099#1073#1080#1088 +
-          #1072#1077#1090#1100#1089#1103' '#1089#1074#1077#1088#1093#1091
-        TabOrder = 2
-        ExplicitWidth = 813
-        ExplicitHeight = 246
+        TabOrder = 1
+        ExplicitHeight = 267
+        object ImageProject: TImage
+          Left = 2
+          Top = 6
+          Width = 599
+          Height = 299
+        end
+        object GroupBox3: TGroupBox
+          Left = 607
+          Top = 6
+          Width = 194
+          Height = 195
+          Caption = #1044#1072#1085#1085#1099#1077' '#1087#1088#1086#1077#1082#1090#1072
+          TabOrder = 0
+          object LabelName: TLabel
+            Left = 16
+            Top = 24
+            Width = 60
+            Height = 15
+            Caption = 'LabelName'
+          end
+          object LabelDate: TLabel
+            Left = 16
+            Top = 56
+            Width = 52
+            Height = 15
+            Caption = 'LabelDate'
+          end
+          object MemoWorkers: TMemo
+            Left = 16
+            Top = 88
+            Width = 169
+            Height = 89
+            Lines.Strings = (
+              'MemoWorkers')
+            ReadOnly = True
+            TabOrder = 0
+          end
+        end
       end
     end
     object TabSheet3: TTabSheet
@@ -674,8 +654,6 @@ object Form1: TForm1
         Height = 450
         Align = alClient
         TabOrder = 0
-        ExplicitWidth = 813
-        ExplicitHeight = 429
         object GroupBox2: TGroupBox
           Left = 152
           Top = 88
@@ -705,19 +683,27 @@ object Form1: TForm1
     Left = 44
     Top = 322
   end
-  object ADOTableProject: TADOTable
+  object DataSourceProjecParticipation: TDataSource
+    DataSet = ADOTableProjecParticipation
+    Left = 188
+    Top = 322
+  end
+  object ADOTableProjecParticipation: TADOTable
     Active = True
     ConnectionString = 
       'Provider=MSDASQL.1;Persist Security Info=False;Data Source=laba1' +
       '6'
     CursorType = ctStatic
-    TableName = 'Projects'
-    Left = 756
-    Top = 290
+    TableName = 'Project_Participation'
+    Left = 180
+    Top = 258
   end
-  object DataSourceProject: TDataSource
-    DataSet = ADOTableProject
-    Left = 756
-    Top = 346
+  object ADOQuery1: TADOQuery
+    ConnectionString = 
+      'Provider=MSDASQL.1;Persist Security Info=False;Data Source=laba1' +
+      '6'
+    Parameters = <>
+    Left = 348
+    Top = 291
   end
 end

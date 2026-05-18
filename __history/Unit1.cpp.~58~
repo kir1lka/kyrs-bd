@@ -1,0 +1,181 @@
+﻿//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "Unit1.h"
+#include <pngimage.hpp>
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+#include "edit.h"
+TForm1 *Form1;
+//---------------------------------------------------------------------------
+__fastcall TForm1::TForm1(TComponent* Owner)
+	: TForm(Owner)
+{
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm1::ButtonDelEmplClick(TObject *Sender)
+{
+	if (Application->MessageBox(L"Удалить выбранного сотрудника?", L"Внимание", MB_YESNO | MB_ICONQUESTION) == mrYes)
+	{
+        try
+		{
+            ADOTableEmpl->Delete();
+        }
+        catch (Exception &e)
+		{
+			ShowMessage("Ошибка удаления: " + e.Message);
+        }
+    }
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TForm1::ButtonAcceptEmplClick(TObject *Sender)
+{
+	String sortField;
+	String filterField;
+	String filterText;
+	String sortType;
+
+	sortField = ComboBoxSortField->Text;
+
+	if (sortField != "Выключено")
+    {
+        if (RadioButtonAsc->Checked)
+            sortType = "ASC";
+        else
+            sortType = "DESC";
+
+        ADOTableEmpl->Sort = sortField + " " + sortType;
+    }
+    else
+	{
+        ADOTableEmpl->Sort = "";
+	}
+
+	filterField = ComboBoxFilterField->Text;
+	filterText = EditFilter->Text;
+
+	if (filterField != "Выключено" && filterText != "")
+    {
+        ADOTableEmpl->Filter =
+            filterField + " LIKE '%" + filterText + "%'";
+
+        ADOTableEmpl->Filtered = true;
+    }
+    else
+    {
+        ADOTableEmpl->Filtered = false;
+    }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::ButtonAddEmlClick(TObject *Sender)
+{
+ 	Form2->EditMode = false;
+
+    Form2->EditLastName->Clear();
+    Form2->EditFirstName->Clear();
+    Form2->EditMiddleName->Clear();
+
+    Form2->EditDepartmentId->Clear();
+    Form2->EditPositionId->Clear();
+    Form2->EditAddressId->Clear();
+
+    Form2->ShowModal();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::ButtonEditEmplClick(TObject *Sender)
+{
+	if (ADOTableEmpl->IsEmpty())
+        return;
+
+    Form2->EditMode = true;
+
+	Form2->EditLastName->Text = ADOTableEmpl->FieldByName("last_name")->AsString;
+	Form2->EditFirstName->Text = ADOTableEmpl->FieldByName("firtst_name")->AsString;
+	Form2->EditMiddleName->Text = ADOTableEmpl->FieldByName("middle_name")->AsString;
+	Form2->DateTimePickerBirthDate->Date = ADOTableEmpl->FieldByName("birth_date")->AsDateTime;
+	Form2->EditDepartmentId->Text = ADOTableEmpl->FieldByName("department_id")->AsString;
+	Form2->EditPositionId->Text = ADOTableEmpl->FieldByName("position_id")->AsString;
+	Form2->EditAddressId->Text = ADOTableEmpl->FieldByName("address_id")->AsString;
+	Form2->ShowModal();
+}
+//---------------------------------------------------------------------------
+
+
+
+void __fastcall TForm1::DBGrid2CellClick(TColumn *Column)
+{
+	if (ADOTableProjecParticipation->IsEmpty()) return;
+
+    int projectID = ADOTableProjecParticipation->FieldByName("project_id")->AsInteger;
+
+    // Название проекта
+	ADOTableProjects->Close();
+    ADOTableProjects->Open();
+    if (ADOTableProjects->Locate("id", Variant(projectID), TLocateOptions()))
+    {
+        LabelName->Caption = "Название: " + ADOTableProjects->FieldByName("name")->AsString;
+    }
+
+    // Дедлайн из текущей строки
+    LabelDate->Caption = "Дедлайн: " + DateToStr(ADOTableProjecParticipation->FieldByName("deadline")->AsDateTime);
+
+    // Изображение
+    String imgPath = ADOTableProjecParticipation->FieldByName("image_path")->AsString;
+    if (FileExists(imgPath))
+        ImageProject->Picture->LoadFromFile(imgPath);
+    else
+        ImageProject->Picture = NULL;
+
+    // Участники и роли
+    String sWorkers = "";
+
+    // Сохраняем текущую позицию
+    ADOTableProjecParticipation->DisableControls();
+    TBookmark bookmark = ADOTableProjecParticipation->GetBookmark();
+
+    ADOTableProjecParticipation->First();
+    while (!ADOTableProjecParticipation->Eof)
+    {
+        if (ADOTableProjecParticipation->FieldByName("project_id")->AsInteger == projectID)
+        {
+            int empID  = ADOTableProjecParticipation->FieldByName("employee_id")->AsInteger;
+            int roleID = ADOTableProjecParticipation->FieldByName("role_id")->AsInteger;
+
+            // Ищем сотрудника
+            String empName = "";
+            if (ADOTableEmpl->Locate("id", Variant(empID), TLocateOptions()))
+            {
+                empName = ADOTableEmpl->FieldByName("last_name")->AsString + " " +
+                          ADOTableEmpl->FieldByName("firtst_name")->AsString;
+            }
+
+            // Ищем роль
+            String roleName = "";
+            ADOTableRoles->Close();
+            ADOTableRoles->Open();
+            if (ADOTableRoles->Locate("id", Variant(roleID), TLocateOptions()))
+            {
+                roleName = ADOTableRoles->FieldByName("name")->AsString;
+            }
+
+            sWorkers = sWorkers + empName + " — " + roleName + "\r\n";
+        }
+        ADOTableProjecParticipation->Next();
+    }
+
+    // Возвращаем позицию
+    ADOTableProjecParticipation->GotoBookmark(bookmark);
+    ADOTableProjecParticipation->FreeBookmark(bookmark);
+    ADOTableProjecParticipation->EnableControls();
+
+    MemoWorkers->Text = sWorkers;
+}
+//---------------------------------------------------------------------------
+

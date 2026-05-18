@@ -1,9 +1,10 @@
-//---------------------------------------------------------------------------
+ï»¿//---------------------------------------------------------------------------
 
 #include <vcl.h>
 #pragma hdrstop
 
 #include "Unit1.h"
+#include <pngimage.hpp>
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
@@ -13,11 +14,12 @@ TForm1 *Form1;
 __fastcall TForm1::TForm1(TComponent* Owner)
 	: TForm(Owner)
 {
+BasePath = "C:\\Users\\PC\\Desktop\\Ð±Ð´";
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm1::ButtonDelEmplClick(TObject *Sender)
 {
-	if (Application->MessageBox(L"Óäàëèòü âûáðàííîãî ñîòðóäíèêà?", L"Âíèìàíèå", MB_YESNO | MB_ICONQUESTION) == mrYes)
+	if (Application->MessageBox(L"Ð£Ð´Ð°Ð»Ð¸Ñ‚ÑŒ Ð²Ñ‹Ð±Ñ€Ð°Ð½Ð½Ð¾Ð³Ð¾ ÑÐ¾Ñ‚Ñ€ÑƒÐ´Ð½Ð¸ÐºÐ°?", L"Ð’Ð½Ð¸Ð¼Ð°Ð½Ð¸Ðµ", MB_YESNO | MB_ICONQUESTION) == mrYes)
 	{
         try
 		{
@@ -25,7 +27,7 @@ void __fastcall TForm1::ButtonDelEmplClick(TObject *Sender)
         }
         catch (Exception &e)
 		{
-			ShowMessage("Îøèáêà óäàëåíèÿ: " + e.Message);
+			ShowMessage("ÐžÑˆÐ¸Ð±ÐºÐ° ÑƒÐ´Ð°Ð»ÐµÐ½Ð¸Ñ: " + e.Message);
         }
     }
 }
@@ -41,7 +43,7 @@ void __fastcall TForm1::ButtonAcceptEmplClick(TObject *Sender)
 
 	sortField = ComboBoxSortField->Text;
 
-	if (sortField != "Âûêëþ÷åíî")
+	if (sortField != "Ð’Ñ‹ÐºÐ»ÑŽÑ‡ÐµÐ½Ð¾")
     {
         if (RadioButtonAsc->Checked)
             sortType = "ASC";
@@ -58,7 +60,7 @@ void __fastcall TForm1::ButtonAcceptEmplClick(TObject *Sender)
 	filterField = ComboBoxFilterField->Text;
 	filterText = EditFilter->Text;
 
-	if (filterField != "Âûêëþ÷åíî" && filterText != "")
+	if (filterField != "Ð’Ñ‹ÐºÐ»ÑŽÑ‡ÐµÐ½Ð¾" && filterText != "")
     {
         ADOTableEmpl->Filter =
             filterField + " LIKE '%" + filterText + "%'";
@@ -103,6 +105,51 @@ void __fastcall TForm1::ButtonEditEmplClick(TObject *Sender)
 	Form2->EditPositionId->Text = ADOTableEmpl->FieldByName("position_id")->AsString;
 	Form2->EditAddressId->Text = ADOTableEmpl->FieldByName("address_id")->AsString;
 	Form2->ShowModal();
+}
+//---------------------------------------------------------------------------
+
+
+
+void __fastcall TForm1::DBGrid2CellClick(TColumn *Column)
+{
+if (ADOTableProjecParticipation->IsEmpty()) return;
+
+    int projectID = ADOTableProjecParticipation->FieldByName("project_id")->AsInteger;
+
+    ADOQuery1->Close();
+    ADOQuery1->SQL->Text =
+        "SELECT p.name, p.start_date, p.end_date, "
+        "e.last_name, e.firtst_name, r.name as role_name "
+        "FROM Projects p "
+		"LEFT JOIN Project_Participation pp ON pp.project_id = p.id "
+		"LEFT JOIN Employees e ON e.id = pp.employee_id "
+		"LEFT JOIN Roles r ON r.id = pp.role_id "
+        "WHERE p.id = " + IntToStr(projectID);
+    ADOQuery1->Open();
+
+    if (!ADOQuery1->IsEmpty())
+    {
+        LabelName->Caption = "ÐÐ°Ð·Ð²Ð°Ð½Ð¸Ðµ: " + ADOQuery1->FieldByName("name")->AsString;
+        LabelDate->Caption = "Ð”ÐµÐ´Ð»Ð°Ð¹Ð½: " + ADOQuery1->FieldByName("end_date")->AsString;
+
+       String imgPath = BasePath + ADOTableProjecParticipation->FieldByName("image_path")->AsString;
+		if (FileExists(imgPath))
+			ImageProject->Picture->LoadFromFile(imgPath);
+		else
+			ImageProject->Picture = NULL;
+
+        String sWorkers = "";
+        ADOQuery1->First();
+        while (!ADOQuery1->Eof)
+        {
+            sWorkers = sWorkers +
+                ADOQuery1->FieldByName("last_name")->AsString + " " +
+				ADOQuery1->FieldByName("firtst_name")->AsString + " - " +
+				ADOQuery1->FieldByName("role_name")->AsString + "\r\n";
+            ADOQuery1->Next();
+        }
+        MemoWorkers->Lines->Text = sWorkers;
+	}
 }
 //---------------------------------------------------------------------------
 
