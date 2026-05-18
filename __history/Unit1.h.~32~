@@ -32,12 +32,7 @@ __published:	// IDE-managed Components
 	TPanel *Panel2;
 	TGroupBox *GroupBox1;
 	TDBGrid *DBGrid2;
-	TDataSource *DataSourceProject;
-	TPanel *Panel3;
-	TButton *Button1;
-	TButton *Button2;
-	TButton *Button3;
-	TButton *Button4;
+	TDataSource *DataSourceProjecParticipation;
 	TPanel *Panel4;
 	TPanel *Panel5;
 	TGroupBox *GroupBox2;
@@ -54,13 +49,16 @@ __published:	// IDE-managed Components
 	TLabel *LabelDate;
 	TMemo *MemoWorkers;
 	TADOTable *ADOTableProjecParticipation;
+	TADOQuery *ADOQuery1;
 	void __fastcall ButtonDelEmplClick(TObject *Sender);
 	void __fastcall ButtonAcceptEmplClick(TObject *Sender);
 	void __fastcall ButtonAddEmlClick(TObject *Sender);
 	void __fastcall ButtonEditEmplClick(TObject *Sender);
+	void __fastcall DBGrid2CellClick(TColumn *Column);
 
 
 private:	// User declarations
+String BasePath;
 public:		// User declarations
     void LoadProjectInfo(int projectId);
 	__fastcall TForm1(TComponent* Owner);

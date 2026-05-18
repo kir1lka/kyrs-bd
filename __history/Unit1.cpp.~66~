@@ -116,15 +116,14 @@ if (ADOTableProjecParticipation->IsEmpty()) return;
 
     int projectID = ADOTableProjecParticipation->FieldByName("project_id")->AsInteger;
 
-    // Получаем данные проекта
     ADOQuery1->Close();
     ADOQuery1->SQL->Text =
         "SELECT p.name, p.start_date, p.end_date, "
         "e.last_name, e.firtst_name, r.name as role_name "
-        "FROM laba16Projects p "
-        "LEFT JOIN laba16Project_Participation pp ON pp.project_id = p.id "
-        "LEFT JOIN laba16Employees e ON e.id = pp.employee_id "
-        "LEFT JOIN laba16Roles r ON r.id = pp.role_id "
+        "FROM Projects p "
+		"LEFT JOIN Project_Participation pp ON pp.project_id = p.id "
+		"LEFT JOIN Employees e ON e.id = pp.employee_id "
+		"LEFT JOIN Roles r ON r.id = pp.role_id "
         "WHERE p.id = " + IntToStr(projectID);
     ADOQuery1->Open();
 
@@ -135,23 +134,33 @@ if (ADOTableProjecParticipation->IsEmpty()) return;
 
        String imgPath = BasePath + ADOTableProjecParticipation->FieldByName("image_path")->AsString;
 		if (FileExists(imgPath))
-			Image1->Picture->LoadFromFile(imgPath);
+			ImageProject->Picture->LoadFromFile(imgPath);
 		else
-			Image1->Picture = NULL;
+			ImageProject->Picture = NULL;
 
-        // Участники и роли
         String sWorkers = "";
         ADOQuery1->First();
         while (!ADOQuery1->Eof)
         {
             sWorkers = sWorkers +
                 ADOQuery1->FieldByName("last_name")->AsString + " " +
-                ADOQuery1->FieldByName("firtst_name")->AsString + " — " +
-                ADOQuery1->FieldByName("role_name")->AsString + "\r\n";
+				ADOQuery1->FieldByName("firtst_name")->AsString + " - " +
+				ADOQuery1->FieldByName("role_name")->AsString + "\r\n";
             ADOQuery1->Next();
         }
         MemoWorkers->Lines->Text = sWorkers;
 	}
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TForm1::ButtonBrowseClick(TObject *Sender)
+{
+SaveDialog1->Filter = "Excel files (*.xlsx)|*.xlsx";
+    SaveDialog1->DefaultExt = "xlsx";
+    SaveDialog1->FileName = "Report";
+    if (SaveDialog1->Execute())
+        EditPath->Text = SaveDialog1->FileName;
 }
 //---------------------------------------------------------------------------
 

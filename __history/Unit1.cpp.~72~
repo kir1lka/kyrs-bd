@@ -188,10 +188,12 @@ void __fastcall TForm1::ExportToExcel(TADOTable *Table, const String &FileName, 
 {
     Variant Excel, Workbook, Sheet, Cell;
 
+    // Проверим и поправим путь
     String fullPath = FileName;
     if (ExtractFileExt(fullPath).LowerCase() != ".xlsx")
-		fullPath += ".xlsx";
+        fullPath += ".xlsx";
 
+    // Если файл уже существует — удалим (иначе Excel спросит подтверждение)
     if (FileExists(fullPath))
         DeleteFile(fullPath);
 
@@ -203,14 +205,15 @@ void __fastcall TForm1::ExportToExcel(TADOTable *Table, const String &FileName, 
         return;
     }
 
-	Excel.OlePropertySet("Visible", false);
-	Excel.OlePropertySet("DisplayAlerts", false);
+    Excel.OlePropertySet("Visible", false);
+    Excel.OlePropertySet("DisplayAlerts", false);  // отключаем предупреждения
 
     try {
         Workbook = Excel.OlePropertyGet("Workbooks").OleFunction("Add");
         Sheet = Workbook.OlePropertyGet("Worksheets", 1);
-		Sheet.OlePropertySet("Name", WideString(SheetTitle));
+        Sheet.OlePropertySet("Name", WideString(SheetTitle));
 
+        // Заголовок
         Sheet.OlePropertyGet("Cells", 1, 1).OlePropertySet("Value",
             WideString("Отчёт: " + SheetTitle));
         Sheet.OlePropertyGet("Cells", 1, 1).OlePropertyGet("Font").OlePropertySet("Bold", true);
@@ -224,6 +227,7 @@ void __fastcall TForm1::ExportToExcel(TADOTable *Table, const String &FileName, 
 
         int startRow = 4;
 
+        // Заголовки
         for (int i = 0; i < Table->FieldCount; i++) {
             Cell = Sheet.OlePropertyGet("Cells", startRow, i + 1);
             Cell.OlePropertySet("Value", WideString(Table->Fields->Fields[i]->FieldName));
@@ -232,6 +236,7 @@ void __fastcall TForm1::ExportToExcel(TADOTable *Table, const String &FileName, 
             Cell.OlePropertyGet("Borders").OlePropertySet("LineStyle", 1);
         }
 
+        // Данные
         int row = startRow + 1;
         while (!Table->Eof) {
             for (int i = 0; i < Table->FieldCount; i++) {
@@ -249,10 +254,12 @@ void __fastcall TForm1::ExportToExcel(TADOTable *Table, const String &FileName, 
 
         Sheet.OlePropertyGet("Columns").OleFunction("AutoFit");
 
+        // ВАЖНО: сохраняем именно через WideString
         Workbook.OleProcedure("SaveAs", WideString(fullPath), 51);
         Workbook.OleProcedure("Close", false);
         Excel.OleProcedure("Quit");
 
+        // Проверка что файл реально создан
         if (FileExists(fullPath))
             ShowMessage("Отчёт успешно создан:\n" + fullPath);
         else

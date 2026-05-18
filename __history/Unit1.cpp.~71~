@@ -116,15 +116,14 @@ if (ADOTableProjecParticipation->IsEmpty()) return;
 
     int projectID = ADOTableProjecParticipation->FieldByName("project_id")->AsInteger;
 
-    // Получаем данные проекта
     ADOQuery1->Close();
     ADOQuery1->SQL->Text =
         "SELECT p.name, p.start_date, p.end_date, "
         "e.last_name, e.firtst_name, r.name as role_name "
-        "FROM laba16Projects p "
-        "LEFT JOIN laba16Project_Participation pp ON pp.project_id = p.id "
-        "LEFT JOIN laba16Employees e ON e.id = pp.employee_id "
-        "LEFT JOIN laba16Roles r ON r.id = pp.role_id "
+        "FROM Projects p "
+		"LEFT JOIN Project_Participation pp ON pp.project_id = p.id "
+		"LEFT JOIN Employees e ON e.id = pp.employee_id "
+		"LEFT JOIN Roles r ON r.id = pp.role_id "
         "WHERE p.id = " + IntToStr(projectID);
     ADOQuery1->Open();
 
@@ -139,15 +138,14 @@ if (ADOTableProjecParticipation->IsEmpty()) return;
 		else
 			ImageProject->Picture = NULL;
 
-        // Участники и роли
         String sWorkers = "";
         ADOQuery1->First();
         while (!ADOQuery1->Eof)
         {
             sWorkers = sWorkers +
                 ADOQuery1->FieldByName("last_name")->AsString + " " +
-                ADOQuery1->FieldByName("firtst_name")->AsString + " — " +
-                ADOQuery1->FieldByName("role_name")->AsString + "\r\n";
+				ADOQuery1->FieldByName("firtst_name")->AsString + " - " +
+				ADOQuery1->FieldByName("role_name")->AsString + "\r\n";
             ADOQuery1->Next();
         }
         MemoWorkers->Lines->Text = sWorkers;
@@ -155,3 +153,102 @@ if (ADOTableProjecParticipation->IsEmpty()) return;
 }
 //---------------------------------------------------------------------------
 
+
+void __fastcall TForm1::ButtonBrowseClick(TObject *Sender)
+{
+	SaveDialog1->Filter = "Excel files (*.xlsx)|*.xlsx";
+    SaveDialog1->DefaultExt = "xlsx";
+    SaveDialog1->FileName = "Report";
+    if (SaveDialog1->Execute())
+        EditPath->Text = SaveDialog1->FileName;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::ButtonReportClick(TObject *Sender)
+{
+	if (ComboBoxTable->ItemIndex < 0) {
+        ShowMessage("Выберите таблицу для отчёта");
+        return;
+    }
+    if (EditPath->Text.IsEmpty()) {
+        ShowMessage("Укажите путь для сохранения");
+        return;
+    }
+
+    String selected = ComboBoxTable->Text;
+
+    if (selected == "Employees")
+        ExportToExcel(ADOTableEmpl, EditPath->Text, "Сотрудники");
+    else if (selected == "Project_Participation")
+        ExportToExcel(ADOTableProjecParticipation, EditPath->Text, "Участие в проектах");
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::ExportToExcel(TADOTable *Table, const String &FileName, const String &SheetTitle)
+{
+    Variant Excel, Workbook, Sheet, Cell;
+
+    try {
+        Excel = Variant::CreateObject("Excel.Application");
+    }
+    catch (...) {
+        ShowMessage("Excel не установлен на этом компьютере!");
+        return;
+    }
+
+    try {
+        Excel.OlePropertySet("Visible", false);
+
+		Workbook = Excel.OlePropertyGet("Workbooks").OleFunction("Add");
+        Sheet = Workbook.OlePropertyGet("Worksheets", 1);
+        Sheet.OlePropertySet("Name", SheetTitle.c_str());
+
+        Cell = Sheet.OlePropertyGet("Cells", 1, 1);
+        Cell.OlePropertySet("Value", ("Отчёт: " + SheetTitle).c_str());
+        Cell.OlePropertyGet("Font").OlePropertySet("Bold", true);
+        Cell.OlePropertyGet("Font").OlePropertySet("Size", 14);
+
+        Cell = Sheet.OlePropertyGet("Cells", 2, 1);
+        Cell.OlePropertySet("Value", ("Дата: " + DateToStr(Date())).c_str());
+
+        if (!Table->Active) Table->Open();
+        Table->First();
+
+        int startRow = 4;
+
+        for (int i = 0; i < Table->FieldCount; i++) {
+            Cell = Sheet.OlePropertyGet("Cells", startRow, i + 1);
+            Cell.OlePropertySet("Value", Table->Fields->Fields[i]->FieldName.c_str());
+            Cell.OlePropertyGet("Font").OlePropertySet("Bold", true);
+            Cell.OlePropertyGet("Interior").OlePropertySet("Color", (int)0x00CCCCCC);
+            Cell.OlePropertyGet("Borders").OlePropertySet("LineStyle", 1);
+        }
+
+        int row = startRow + 1;
+        while (!Table->Eof) {
+            for (int i = 0; i < Table->FieldCount; i++) {
+                Cell = Sheet.OlePropertyGet("Cells", row, i + 1);
+                Cell.OlePropertySet("Value", Table->Fields->Fields[i]->AsString.c_str());
+                Cell.OlePropertyGet("Borders").OlePropertySet("LineStyle", 1);
+            }
+            row++;
+            Table->Next();
+        }
+
+        Cell = Sheet.OlePropertyGet("Cells", row + 1, 1);
+        Cell.OlePropertySet("Value", ("Всего записей: " + IntToStr(row - startRow - 1)).c_str());
+        Cell.OlePropertyGet("Font").OlePropertySet("Bold", true);
+
+        Sheet.OlePropertyGet("Columns").OleFunction("AutoFit");
+
+        Workbook.OleProcedure("SaveAs", FileName.c_str(), 51);
+        Workbook.OleProcedure("Close");
+        Excel.OleProcedure("Quit");
+
+        ShowMessage("Отчёт успешно создан:\n" + FileName);
+    }
+    catch (Exception &E) {
+        try { Excel.OleProcedure("Quit"); } catch (...) {}
+        ShowMessage("Ошибка при создании отчёта: " + E.Message);
+    }
+}

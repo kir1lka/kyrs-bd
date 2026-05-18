@@ -14,6 +14,7 @@ TForm1 *Form1;
 __fastcall TForm1::TForm1(TComponent* Owner)
 	: TForm(Owner)
 {
+BasePath = "C:\\Users\\PC\\Desktop\\бд";
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm1::ButtonDelEmplClick(TObject *Sender)
@@ -115,15 +116,14 @@ if (ADOTableProjecParticipation->IsEmpty()) return;
 
     int projectID = ADOTableProjecParticipation->FieldByName("project_id")->AsInteger;
 
-    // Получаем данные проекта
     ADOQuery1->Close();
     ADOQuery1->SQL->Text =
         "SELECT p.name, p.start_date, p.end_date, "
         "e.last_name, e.firtst_name, r.name as role_name "
-        "FROM laba16Projects p "
-        "LEFT JOIN laba16Project_Participation pp ON pp.project_id = p.id "
-        "LEFT JOIN laba16Employees e ON e.id = pp.employee_id "
-        "LEFT JOIN laba16Roles r ON r.id = pp.role_id "
+        "FROM Projects p "
+		"LEFT JOIN Project_Participation pp ON pp.project_id = p.id "
+		"LEFT JOIN Employees e ON e.id = pp.employee_id "
+		"LEFT JOIN Roles r ON r.id = pp.role_id "
         "WHERE p.id = " + IntToStr(projectID);
     ADOQuery1->Open();
 
@@ -132,26 +132,25 @@ if (ADOTableProjecParticipation->IsEmpty()) return;
         LabelName->Caption = "Название: " + ADOQuery1->FieldByName("name")->AsString;
         LabelDate->Caption = "Дедлайн: " + ADOQuery1->FieldByName("end_date")->AsString;
 
-        // Изображение
-        String imgPath = ADOTableProjecParticipation->FieldByName("image_path")->AsString;
-        if (FileExists(imgPath))
-            Image1->Picture->LoadFromFile(imgPath);
-        else
-            Image1->Picture = NULL;
+       String imgPath = BasePath + ADOTableProjecParticipation->FieldByName("image_path")->AsString;
+		if (FileExists(imgPath))
+			ImageProject->Picture->LoadFromFile(imgPath);
+		else
+			ImageProject->Picture = NULL;
 
-        // Участники и роли
         String sWorkers = "";
         ADOQuery1->First();
         while (!ADOQuery1->Eof)
         {
             sWorkers = sWorkers +
                 ADOQuery1->FieldByName("last_name")->AsString + " " +
-                ADOQuery1->FieldByName("firtst_name")->AsString + " — " +
-                ADOQuery1->FieldByName("role_name")->AsString + "\r\n";
+				ADOQuery1->FieldByName("firtst_name")->AsString + " - " +
+				ADOQuery1->FieldByName("role_name")->AsString + "\r\n";
             ADOQuery1->Next();
         }
         MemoWorkers->Lines->Text = sWorkers;
 	}
 }
 //---------------------------------------------------------------------------
+
 

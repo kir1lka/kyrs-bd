@@ -13,6 +13,10 @@
 #include <Vcl.DBGrids.hpp>
 #include <Vcl.Grids.hpp>
 #include <Vcl.ExtCtrls.hpp>
+#include <Vcl.Dialogs.hpp>
+
+#include <ComObj.hpp>
+
 //---------------------------------------------------------------------------
 class TForm1 : public TForm
 {
@@ -50,15 +54,23 @@ __published:	// IDE-managed Components
 	TMemo *MemoWorkers;
 	TADOTable *ADOTableProjecParticipation;
 	TADOQuery *ADOQuery1;
+	TComboBox *ComboBoxTable;
+	TEdit *EditPath;
+	TButton *ButtonBrowse;
+	TSaveDialog *SaveDialog1;
+	TButton *ButtonReport;
 	void __fastcall ButtonDelEmplClick(TObject *Sender);
 	void __fastcall ButtonAcceptEmplClick(TObject *Sender);
 	void __fastcall ButtonAddEmlClick(TObject *Sender);
 	void __fastcall ButtonEditEmplClick(TObject *Sender);
 	void __fastcall DBGrid2CellClick(TColumn *Column);
+	void __fastcall ButtonBrowseClick(TObject *Sender);
+	void __fastcall ButtonReportClick(TObject *Sender);
 
 
 private:	// User declarations
 String BasePath;
+void __fastcall ExportToExcel(TADOTable *Table, const String &FileName, const String &SheetTitle);
 public:		// User declarations
     void LoadProjectInfo(int projectId);
 	__fastcall TForm1(TComponent* Owner);

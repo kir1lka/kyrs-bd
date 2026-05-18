@@ -14,6 +14,7 @@ TForm1 *Form1;
 __fastcall TForm1::TForm1(TComponent* Owner)
 	: TForm(Owner)
 {
+BasePath = "C:\\Users\\PC\\Desktop\\бд";
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm1::ButtonDelEmplClick(TObject *Sender)
@@ -109,81 +110,77 @@ void __fastcall TForm1::ButtonEditEmplClick(TObject *Sender)
 
 
 
-
-//String basePath = "C:\\Users\\PC\\Desktop\\бд";
-//String fullPath = basePath + image_path;
-
-void TForm1::LoadProjectInfo(int projectId)
-{
-    // ========== ЗАГРУЗКА ДАННЫХ ПРОЕКТА ==========
-    // Используем ОТДЕЛЬНЫЙ query (добавь ADOQuery на форму, назови ADOQueryProject)
-    ADOQueryProject->Close();
-    ADOQueryProject->SQL->Clear();
-    ADOQueryProject->SQL->Add("SELECT * FROM Projects WHERE id = :id");
-    ADOQueryProject->Parameters->ParamByName("id")->Value = projectId;
-    ADOQueryProject->Open();
-
-    if(!ADOQueryProject->IsEmpty())
-    {
-        // Название проекта
-        LabelName->Caption = ADOQueryProject->FieldByName("name")->AsString;
-
-        // Даты
-        String startDate = ADOQueryProject->FieldByName("start_date")->AsString;
-        String endDate   = ADOQueryProject->FieldByName("end_date")->AsString;
-        LabelDate->Caption = startDate + " - " + endDate;
-
-        // Картинка — image_path хранится в Project_Participation, не в Projects!
-        // Поэтому берём из ADOQueryProjectParticipation
-        String basePath  = "C:\\Users\\PC\\Desktop\\бд";
-        String imagePath = ADOQueryProjectParticipation->FieldByName("image_path")->AsString;
-        String fullPath  = basePath + imagePath;
-
-        if(FileExists(fullPath))
-        {
-            ImageProject->Picture->LoadFromFile(fullPath);
-        }
-        else
-        {
-            ImageProject->Picture->Assign(NULL); // очищаем если файл не найден
-        }
-    }
-
-    // ========== ЗАГРУЗКА СОТРУДНИКОВ ==========
-    MemoWorkers->Lines->Clear();
-    ADOQueryWorkers->Close();
-	ADOQueryWorkers->SQL->Clear();
-	ADOQueryWorkers->SQL->Add(
-    "SELECT e.last_name, e.firtst_name, r.name as role_name "
-    "FROM Project_Participation pp "
-    "INNER JOIN Employees e ON e.id = pp.employee_id "
-    "INNER JOIN Roles r ON r.id = pp.role_id "
-    "WHERE pp.project_id = :id");
-    ADOQueryWorkers->Parameters->ParamByName("id")->Value = projectId;
-    ADOQueryWorkers->Open();
-
-	while(!ADOQueryWorkers->Eof)
-	{
-		String fio = ADOQueryWorkers->FieldByName("last_name")->AsString + " "
-			+ ADOQueryWorkers->FieldByName("firtst_name")->AsString
-			+ " (" + ADOQueryWorkers->FieldByName("role_name")->AsString + ")";
-		// ВОТ ЗДЕСЬ ЗАБЫЛ ДОБАВИТЬ:
-		MemoWorkers->Lines->Add(fio);  // ← этой строки нет!
-		ADOQueryWorkers->Next();
-	}
-}
-
 void __fastcall TForm1::DBGrid2CellClick(TColumn *Column)
 {
-if(ADOQueryProjectParticipation->IsEmpty()) return;
+if (ADOTableProjecParticipation->IsEmpty()) return;
 
-    // Берём project_id из текущей позиции курсора
-    Variant val = ADOQueryProjectParticipation->FieldByName("project_id")->Value;
-    if(val.IsNull()) return;
+    int projectID = ADOTableProjecParticipation->FieldByName("project_id")->AsInteger;
 
-    int projectId = (int)val;
-    LoadProjectInfo(projectId);
+    ADOQuery1->Close();
+    ADOQuery1->SQL->Text =
+        "SELECT p.name, p.start_date, p.end_date, "
+        "e.last_name, e.firtst_name, r.name as role_name "
+        "FROM Projects p "
+		"LEFT JOIN Project_Participation pp ON pp.project_id = p.id "
+		"LEFT JOIN Employees e ON e.id = pp.employee_id "
+		"LEFT JOIN Roles r ON r.id = pp.role_id "
+        "WHERE p.id = " + IntToStr(projectID);
+    ADOQuery1->Open();
 
+    if (!ADOQuery1->IsEmpty())
+    {
+        LabelName->Caption = "Название: " + ADOQuery1->FieldByName("name")->AsString;
+        LabelDate->Caption = "Дедлайн: " + ADOQuery1->FieldByName("end_date")->AsString;
+
+       String imgPath = BasePath + ADOTableProjecParticipation->FieldByName("image_path")->AsString;
+		if (FileExists(imgPath))
+			ImageProject->Picture->LoadFromFile(imgPath);
+		else
+			ImageProject->Picture = NULL;
+
+        String sWorkers = "";
+        ADOQuery1->First();
+        while (!ADOQuery1->Eof)
+        {
+            sWorkers = sWorkers +
+                ADOQuery1->FieldByName("last_name")->AsString + " " +
+				ADOQuery1->FieldByName("firtst_name")->AsString + " - " +
+				ADOQuery1->FieldByName("role_name")->AsString + "\r\n";
+            ADOQuery1->Next();
+        }
+        MemoWorkers->Lines->Text = sWorkers;
+	}
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TForm1::ButtonBrowseClick(TObject *Sender)
+{
+	SaveDialog1->Filter = "Excel files (*.xlsx)|*.xlsx";
+    SaveDialog1->DefaultExt = "xlsx";
+    SaveDialog1->FileName = "Report";
+    if (SaveDialog1->Execute())
+        EditPath->Text = SaveDialog1->FileName;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::ButtonReportClick(TObject *Sender)
+{
+	if (ComboBoxTable->ItemIndex < 0) {
+        ShowMessage("Выберите таблицу для отчёта");
+        return;
+    }
+    if (EditPath->Text.IsEmpty()) {
+        ShowMessage("Укажите путь для сохранения");
+        return;
+    }
+
+    String selected = ComboBoxTable->Text;
+
+    if (selected == "Employees")
+        ExportToExcel(ADOTableEmpl, EditPath->Text, "Сотрудники");
+    else if (selected == "Project_Participation")
+        ExportToExcel(ADOTableProjecParticipation, EditPath->Text, "Участие в проектах");
 }
 //---------------------------------------------------------------------------
 

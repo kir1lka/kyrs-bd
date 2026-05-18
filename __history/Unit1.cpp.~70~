@@ -188,81 +188,76 @@ void __fastcall TForm1::ExportToExcel(TADOTable *Table, const String &FileName, 
 {
     Variant Excel, Workbook, Sheet, Cell;
 
-    String fullPath = FileName;
-    if (ExtractFileExt(fullPath).LowerCase() != ".xlsx")
-		fullPath += ".xlsx";
-
-    if (FileExists(fullPath))
-        DeleteFile(fullPath);
-
     try {
         Excel = Variant::CreateObject("Excel.Application");
     }
     catch (...) {
-        ShowMessage("Excel не установлен!");
+        ShowMessage("Excel не установлен на этом компьютере!");
         return;
     }
 
-	Excel.OlePropertySet("Visible", false);
-	Excel.OlePropertySet("DisplayAlerts", false);
-
     try {
+        Excel.OlePropertySet("Visible", false);
+
+        // Создаём новую книгу
         Workbook = Excel.OlePropertyGet("Workbooks").OleFunction("Add");
         Sheet = Workbook.OlePropertyGet("Worksheets", 1);
-		Sheet.OlePropertySet("Name", WideString(SheetTitle));
+        Sheet.OlePropertySet("Name", SheetTitle.c_str());
 
-        Sheet.OlePropertyGet("Cells", 1, 1).OlePropertySet("Value",
-            WideString("Отчёт: " + SheetTitle));
-        Sheet.OlePropertyGet("Cells", 1, 1).OlePropertyGet("Font").OlePropertySet("Bold", true);
-        Sheet.OlePropertyGet("Cells", 1, 1).OlePropertyGet("Font").OlePropertySet("Size", 14);
+        // Заголовок отчёта
+        Cell = Sheet.OlePropertyGet("Cells", 1, 1);
+        Cell.OlePropertySet("Value", ("Отчёт: " + SheetTitle).c_str());
+        Cell.OlePropertyGet("Font").OlePropertySet("Bold", true);
+        Cell.OlePropertyGet("Font").OlePropertySet("Size", 14);
 
-        Sheet.OlePropertyGet("Cells", 2, 1).OlePropertySet("Value",
-            WideString("Дата: " + DateToStr(Date())));
+        Cell = Sheet.OlePropertyGet("Cells", 2, 1);
+        Cell.OlePropertySet("Value", ("Дата: " + DateToStr(Date())).c_str());
 
+        // Открываем таблицу (если ещё не открыта)
         if (!Table->Active) Table->Open();
         Table->First();
 
         int startRow = 4;
 
+        // ----- Заголовки столбцов -----
         for (int i = 0; i < Table->FieldCount; i++) {
             Cell = Sheet.OlePropertyGet("Cells", startRow, i + 1);
-            Cell.OlePropertySet("Value", WideString(Table->Fields->Fields[i]->FieldName));
+            Cell.OlePropertySet("Value", Table->Fields->Fields[i]->FieldName.c_str());
             Cell.OlePropertyGet("Font").OlePropertySet("Bold", true);
             Cell.OlePropertyGet("Interior").OlePropertySet("Color", (int)0x00CCCCCC);
             Cell.OlePropertyGet("Borders").OlePropertySet("LineStyle", 1);
         }
 
+        // ----- Данные -----
         int row = startRow + 1;
         while (!Table->Eof) {
             for (int i = 0; i < Table->FieldCount; i++) {
                 Cell = Sheet.OlePropertyGet("Cells", row, i + 1);
-                Cell.OlePropertySet("Value", WideString(Table->Fields->Fields[i]->AsString));
+                Cell.OlePropertySet("Value", Table->Fields->Fields[i]->AsString.c_str());
                 Cell.OlePropertyGet("Borders").OlePropertySet("LineStyle", 1);
             }
             row++;
             Table->Next();
         }
 
+        // ----- Итоги -----
         Cell = Sheet.OlePropertyGet("Cells", row + 1, 1);
-        Cell.OlePropertySet("Value", WideString("Всего записей: " + IntToStr(row - startRow - 1)));
+        Cell.OlePropertySet("Value", ("Всего записей: " + IntToStr(row - startRow - 1)).c_str());
         Cell.OlePropertyGet("Font").OlePropertySet("Bold", true);
 
+        // Автоширина столбцов
         Sheet.OlePropertyGet("Columns").OleFunction("AutoFit");
 
-        Workbook.OleProcedure("SaveAs", WideString(fullPath), 51);
-        Workbook.OleProcedure("Close", false);
+        // Сохраняем
+        // xlOpenXMLWorkbook = 51 (xlsx)
+        Workbook.OleProcedure("SaveAs", FileName.c_str(), 51);
+        Workbook.OleProcedure("Close");
         Excel.OleProcedure("Quit");
 
-        if (FileExists(fullPath))
-            ShowMessage("Отчёт успешно создан:\n" + fullPath);
-        else
-            ShowMessage("Файл не создан! Проверьте путь:\n" + fullPath);
+        ShowMessage("Отчёт успешно создан:\n" + FileName);
     }
     catch (Exception &E) {
-        try {
-            Excel.OlePropertySet("DisplayAlerts", false);
-            Excel.OleProcedure("Quit");
-        } catch (...) {}
-        ShowMessage("Ошибка при создании отчёта:\n" + E.Message);
+        try { Excel.OleProcedure("Quit"); } catch (...) {}
+        ShowMessage("Ошибка при создании отчёта: " + E.Message);
     }
 }

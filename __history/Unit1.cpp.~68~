@@ -14,6 +14,7 @@ TForm1 *Form1;
 __fastcall TForm1::TForm1(TComponent* Owner)
 	: TForm(Owner)
 {
+BasePath = "C:\\Users\\PC\\Desktop\\бд";
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm1::ButtonDelEmplClick(TObject *Sender)
@@ -115,67 +116,71 @@ if (ADOTableProjecParticipation->IsEmpty()) return;
 
     int projectID = ADOTableProjecParticipation->FieldByName("project_id")->AsInteger;
 
-    // Название проекта
-    ADOTableProjects->Close();
-    ADOTableProjects->Open();
-    if (ADOTableProjects->Locate("id", Variant(projectID), TLocateOptions()))
+    ADOQuery1->Close();
+    ADOQuery1->SQL->Text =
+        "SELECT p.name, p.start_date, p.end_date, "
+        "e.last_name, e.firtst_name, r.name as role_name "
+        "FROM Projects p "
+		"LEFT JOIN Project_Participation pp ON pp.project_id = p.id "
+		"LEFT JOIN Employees e ON e.id = pp.employee_id "
+		"LEFT JOIN Roles r ON r.id = pp.role_id "
+        "WHERE p.id = " + IntToStr(projectID);
+    ADOQuery1->Open();
+
+    if (!ADOQuery1->IsEmpty())
     {
-        LabelName->Caption = "Название: " + ADOTableProjects->FieldByName("name")->AsString;
-    }
+        LabelName->Caption = "Название: " + ADOQuery1->FieldByName("name")->AsString;
+        LabelDate->Caption = "Дедлайн: " + ADOQuery1->FieldByName("end_date")->AsString;
 
-    // Дедлайн из текущей строки
-    LabelDate->Caption = "Дедлайн: " + DateToStr(ADOTableProjecParticipation->FieldByName("deadline")->AsDateTime);
+       String imgPath = BasePath + ADOTableProjecParticipation->FieldByName("image_path")->AsString;
+		if (FileExists(imgPath))
+			ImageProject->Picture->LoadFromFile(imgPath);
+		else
+			ImageProject->Picture = NULL;
 
-    // Изображение
-    String imgPath = ADOTableProjecParticipation->FieldByName("image_path")->AsString;
-    if (FileExists(imgPath))
-        ImageProject->Picture->LoadFromFile(imgPath);
-    else
-        ImageProject->Picture = NULL;
-
-    // Участники и роли
-    String sWorkers = "";
-
-    // Сохраняем текущую позицию
-    ADOTableProjecParticipation->DisableControls();
-    TBookmark bookmark = ADOTableProjecParticipation->GetBookmark();
-
-    ADOTableProjecParticipation->First();
-    while (!ADOTableProjecParticipation->Eof)
-    {
-        if (ADOTableProjecParticipation->FieldByName("project_id")->AsInteger == projectID)
+        String sWorkers = "";
+        ADOQuery1->First();
+        while (!ADOQuery1->Eof)
         {
-            int empID  = ADOTableProjecParticipation->FieldByName("employee_id")->AsInteger;
-            int roleID = ADOTableProjecParticipation->FieldByName("role_id")->AsInteger;
-
-            // Ищем сотрудника
-            String empName = "";
-            if (ADOTableEmpl->Locate("id", Variant(empID), TLocateOptions()))
-            {
-                empName = ADOTableEmpl->FieldByName("last_name")->AsString + " " +
-                          ADOTableEmpl->FieldByName("firtst_name")->AsString;
-            }
-
-            // Ищем роль
-            String roleName = "";
-            ADOTableRoles->Close();
-            ADOTableRoles->Open();
-            if (ADOTableRoles->Locate("id", Variant(roleID), TLocateOptions()))
-            {
-                roleName = ADOTableRoles->FieldByName("name")->AsString;
-            }
-
-            sWorkers = sWorkers + empName + " — " + roleName + "\r\n";
+            sWorkers = sWorkers +
+                ADOQuery1->FieldByName("last_name")->AsString + " " +
+				ADOQuery1->FieldByName("firtst_name")->AsString + " - " +
+				ADOQuery1->FieldByName("role_name")->AsString + "\r\n";
+            ADOQuery1->Next();
         }
-        ADOTableProjecParticipation->Next();
+        MemoWorkers->Lines->Text = sWorkers;
+	}
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TForm1::ButtonBrowseClick(TObject *Sender)
+{
+	SaveDialog1->Filter = "Excel files (*.xlsx)|*.xlsx";
+    SaveDialog1->DefaultExt = "xlsx";
+    SaveDialog1->FileName = "Report";
+    if (SaveDialog1->Execute())
+        EditPath->Text = SaveDialog1->FileName;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::ButtonReportClick(TObject *Sender)
+{
+ if (ComboBoxTable->ItemIndex < 0) {
+        ShowMessage("Выберите таблицу для отчёта");
+        return;
+    }
+    if (EditPath->Text.IsEmpty()) {
+        ShowMessage("Укажите путь для сохранения");
+        return;
     }
 
-    // Возвращаем позицию
-    ADOTableProjecParticipation->GotoBookmark(bookmark);
-    ADOTableProjecParticipation->FreeBookmark(bookmark);
-    ADOTableProjecParticipation->EnableControls();
+    String selected = ComboBoxTable->Text;
 
-    MemoWorkers->Text = sWorkers;
+    if (selected == "Employees")
+        ExportToExcel(ADOTableEmpl, EditPath->Text, "Сотрудники");
+    else if (selected == "Project_Participation")
+        ExportToExcel(ADOTableProjecParticipation, EditPath->Text, "Участие в проектах");
 }
 //---------------------------------------------------------------------------
 

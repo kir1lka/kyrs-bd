@@ -322,7 +322,7 @@ object Form1: TForm1
     Top = 0
     Width = 820
     Height = 480
-    ActivePage = TabSheet2
+    ActivePage = TabSheet3
     Align = alClient
     TabOrder = 0
     ExplicitWidth = 814
@@ -335,8 +335,9 @@ object Form1: TForm1
         Width = 812
         Height = 307
         Align = alClient
-        Color = 14079702
+        Color = clMoneyGreen
         DataSource = DataSourceEmpl
+        FixedColor = clMoneyGreen
         GradientEndColor = clMedGray
         ParentShowHint = False
         ReadOnly = True
@@ -404,13 +405,11 @@ object Form1: TForm1
         Height = 46
         Align = alBottom
         BorderWidth = 1
-        Color = clWhite
+        Color = clMoneyGreen
         ParentBackground = False
         ParentShowHint = False
         ShowHint = True
         TabOrder = 1
-        ExplicitTop = 387
-        ExplicitWidth = 806
         object ButtonAddEml: TButton
           Left = 2
           Top = 2
@@ -450,7 +449,6 @@ object Form1: TForm1
           Caption = #1055#1088#1080#1084#1077#1085#1080#1090#1100' '#1085#1072#1089#1090#1088#1086#1081#1082#1080
           TabOrder = 3
           OnClick = ButtonAcceptEmplClick
-          ExplicitLeft = 641
         end
       end
       object Panel2: TPanel
@@ -460,7 +458,6 @@ object Form1: TForm1
         Height = 97
         Align = alTop
         TabOrder = 2
-        ExplicitWidth = 806
         object GroupBox1: TGroupBox
           Left = 1
           Top = 1
@@ -468,11 +465,10 @@ object Form1: TForm1
           Height = 95
           Align = alClient
           Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1072' '#1088#1077#1078#1080#1084#1072
-          Color = clWhite
+          Color = clMoneyGreen
           ParentBackground = False
           ParentColor = False
           TabOrder = 0
-          ExplicitWidth = 804
           DesignSize = (
             810
             95)
@@ -543,8 +539,7 @@ object Form1: TForm1
               #1042#1099#1082#1083#1102#1095#1077#1085#1086
               'last_name'
               'firtst_name'
-              'middle_name'
-              'address_id')
+              'middle_name')
           end
           object EditFilter: TEdit
             Left = 608
@@ -593,6 +588,7 @@ object Form1: TForm1
           item
             Expanded = False
             FieldName = 'image_path'
+            Width = 300
             Visible = True
           end>
       end
@@ -602,8 +598,11 @@ object Form1: TForm1
         Width = 812
         Height = 313
         Align = alClient
+        Color = clMoneyGreen
+        ParentBackground = False
         TabOrder = 1
-        ExplicitHeight = 267
+        ExplicitWidth = 806
+        ExplicitHeight = 296
         object ImageProject: TImage
           Left = 2
           Top = 6
@@ -616,20 +615,23 @@ object Form1: TForm1
           Width = 194
           Height = 195
           Caption = #1044#1072#1085#1085#1099#1077' '#1087#1088#1086#1077#1082#1090#1072
+          Color = clWhite
+          ParentBackground = False
+          ParentColor = False
           TabOrder = 0
           object LabelName: TLabel
             Left = 16
             Top = 24
-            Width = 60
+            Width = 63
             Height = 15
-            Caption = 'LabelName'
+            Caption = #1053#1072#1079#1074#1072#1085#1080#1077': -'
           end
           object LabelDate: TLabel
             Left = 16
             Top = 56
-            Width = 52
+            Width = 58
             Height = 15
-            Caption = 'LabelDate'
+            Caption = #1044#1077#1076#1083#1072#1081#1085': -'
           end
           object MemoWorkers: TMemo
             Left = 16
@@ -637,7 +639,7 @@ object Form1: TForm1
             Width = 169
             Height = 89
             Lines.Strings = (
-              'MemoWorkers')
+              #1059#1095#1072#1089#1090#1085#1080#1082#1080': -')
             ReadOnly = True
             TabOrder = 0
           end
@@ -653,6 +655,8 @@ object Form1: TForm1
         Width = 812
         Height = 450
         Align = alClient
+        Color = clMoneyGreen
+        ParentBackground = False
         TabOrder = 0
         object GroupBox2: TGroupBox
           Left = 152
@@ -662,8 +666,53 @@ object Form1: TForm1
           Margins.Left = 10000
           BiDiMode = bdLeftToRight
           Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080' '#1086#1090#1095#1077#1090#1072
+          Color = clWhite
+          ParentBackground = False
           ParentBiDiMode = False
+          ParentColor = False
           TabOrder = 0
+          object ComboBoxTable: TComboBox
+            Left = 128
+            Top = 36
+            Width = 217
+            Height = 23
+            Style = csDropDownList
+            ItemIndex = 0
+            TabOrder = 0
+            Text = 'Employees'
+            Items.Strings = (
+              'Employees'
+              'Project_Participation')
+          end
+          object EditPath: TEdit
+            Left = 128
+            Top = 84
+            Width = 217
+            Height = 23
+            ParentShowHint = False
+            ReadOnly = True
+            ShowHint = False
+            TabOrder = 1
+            TextHint = #1076#1083#1103' '#1087#1091#1090#1080' '#1089#1086#1093#1088#1072#1085#1077#1085#1080#1103
+          end
+          object ButtonBrowse: TButton
+            Left = 128
+            Top = 113
+            Width = 217
+            Height = 25
+            Caption = #1054#1073#1079#1086#1088'...'
+            TabOrder = 2
+            OnClick = ButtonBrowseClick
+          end
+          object ButtonReport: TButton
+            Left = 128
+            Top = 185
+            Width = 217
+            Height = 25
+            Caption = #1057#1076#1077#1083#1072#1090#1100' '#1086#1090#1095#1105#1090
+            TabOrder = 3
+            OnClick = ButtonReportClick
+          end
         end
       end
     end
@@ -705,5 +754,9 @@ object Form1: TForm1
     Parameters = <>
     Left = 348
     Top = 291
+  end
+  object SaveDialog1: TSaveDialog
+    Left = 516
+    Top = 218
   end
 end
