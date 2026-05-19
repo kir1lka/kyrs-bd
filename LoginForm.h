@@ -1,0 +1,38 @@
+//---------------------------------------------------------------------------
+
+#ifndef LoginFormH
+#define LoginFormH
+//---------------------------------------------------------------------------
+#include <System.Classes.hpp>
+#include <Vcl.Controls.hpp>
+#include <Vcl.StdCtrls.hpp>
+#include <Vcl.Forms.hpp>
+#include <Data.DB.hpp>
+#include <Data.FMTBcd.hpp>
+#include <Data.SqlExpr.hpp>
+#include <Data.Win.ADODB.hpp>
+//---------------------------------------------------------------------------
+class TForm3 : public TForm
+{
+__published:	// IDE-managed Components
+	TLabel *Label1;
+	TEdit *edtLogin;
+	TLabel *Label2;
+	TEdit *edtPassword;
+	TButton *btnLogin;
+	TLabel *lblError;
+	TADOQuery *qryLogin;
+	TADODataSet *ADODataSet1;
+	void __fastcall btnLoginClick(TObject *Sender);
+	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
+private:	// User declarations
+public:		// User declarations
+	__fastcall TForm3(TComponent* Owner);
+    String CurrentRole;
+    int    CurrentUserId;
+    int    CurrentEmployeeId;
+};
+//---------------------------------------------------------------------------
+extern PACKAGE TForm3 *Form3;
+//---------------------------------------------------------------------------
+#endif

@@ -1,0 +1,76 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "LoginForm.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+
+#include "Unit1.h"
+
+TForm3 *Form3;
+//---------------------------------------------------------------------------
+__fastcall TForm3::TForm3(TComponent* Owner)
+	: TForm(Owner)
+{
+	edtPassword->PasswordChar = '*';
+    lblError->Caption = "";
+    CurrentRole = "";
+    CurrentUserId = -1;
+    CurrentEmployeeId = -1;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm3::btnLoginClick(TObject *Sender)
+{
+    String login    = edtLogin->Text.Trim();
+    String password = edtPassword->Text.Trim();
+
+    if (login.IsEmpty() || password.IsEmpty()) {
+        lblError->Caption = "Введите логин и пароль!";
+        return;
+    }
+
+    try {
+        qryLogin->Close();
+        qryLogin->SQL->Clear();
+        qryLogin->SQL->Add(
+            "SELECT id, role, employee_id, is_active "
+            "FROM Users "
+            "WHERE username = :uname AND password = :upass"
+        );
+        qryLogin->Parameters->ParamByName("uname")->Value = login;
+        qryLogin->Parameters->ParamByName("upass")->Value = password;
+        qryLogin->Open();
+
+        if (qryLogin->RecordCount == 0) {
+            lblError->Caption = "Неверный логин или пароль!";
+            edtPassword->Clear();
+            return;
+        }
+
+        bool isActive = qryLogin->FieldByName("is_active")->AsBoolean;
+        if (!isActive) {
+            lblError->Caption = "Аккаунт заблокирован!";
+            return;
+        }
+
+        // Сохраняем данные пользователя
+        CurrentRole       = qryLogin->FieldByName("role")->AsString;
+        CurrentUserId     = qryLogin->FieldByName("id")->AsInteger;
+        CurrentEmployeeId = qryLogin->FieldByName("employee_id")->AsInteger;
+
+        qryLogin->Close();
+
+        // Передаём роль в главную форму
+        Form1->SetUserRole(CurrentRole, CurrentEmployeeId);
+
+        this->Hide();
+        Form1->Show();
+
+    } catch (Exception &e) {
+        lblError->Caption = "Ошибка БД: " + e.Message;
+    }
+}

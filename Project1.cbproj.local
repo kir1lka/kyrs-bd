@@ -1,21 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>1899.12.30 00:00:00.000.738,C:\Users\Blinov\Desktop\бд\курсовая бд\edit.dfm=C:\Users\Blinov\Desktop\бд\курсовая бд\Unit2.dfm</Transaction>
     <Transaction>1899.12.30 00:00:00.000.548,=C:\Users\Blinov\Documents\Embarcadero\Studio\Projects\Unit1.cpp</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.879,C:\Users\Blinov\Desktop\бд\курсовая бд\Project1.cbproj=C:\Users\Blinov\Documents\Embarcadero\Studio\Projects\Project1.cbproj</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.738,C:\Users\Blinov\Desktop\бд\курсовая бд\edit.cpp=C:\Users\Blinov\Desktop\бд\курсовая бд\Unit2.cpp</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.738,C:\Users\Blinov\Desktop\бд\курсовая бд\edit.h=C:\Users\Blinov\Desktop\бд\курсовая бд\Unit2.h</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.399,=C:\Users\Blinov\Desktop\бд\курсовая бд\Unit2.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.568,C:\Users\Blinov\Documents\Embarcadero\Studio\Projects\Unit1.cpp=C:\Users\Blinov\Desktop\бд\курсовая бд\Unit1.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.805,C:\Users\PC\Desktop\бд\kyrs-bd\LoginForm.cpp=C:\Users\PC\Desktop\бд\kyrs-bd\Unit3.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.210,C:\Users\Blinov\Desktop\бд\курсовая бд\Unit2.h=C:\Users\Blinov\Desktop\бд\курсовая бд\UnitEmployeeEdit.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.738,C:\Users\Blinov\Desktop\бд\курсовая бд\Unit2.h=C:\Users\Blinov\Desktop\бд\курсовая бд\edit.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.879,C:\Users\Blinov\Documents\Embarcadero\Studio\Projects\Project1.cbproj=C:\Users\Blinov\Desktop\бд\курсовая бд\Project1.cbproj</Transaction>
     <Transaction>1899.12.30 00:00:00.000.290,=C:\Users\Blinov\Desktop\бд\курсовая бд\Unit2.cpp</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.568,C:\Users\Blinov\Desktop\бд\курсовая бд\Unit1.cpp=C:\Users\Blinov\Documents\Embarcadero\Studio\Projects\Unit1.cpp</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.210,C:\Users\Blinov\Desktop\бд\курсовая бд\UnitEmployeeEdit.h=C:\Users\Blinov\Desktop\бд\курсовая бд\Unit2.h</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.210,C:\Users\Blinov\Desktop\бд\курсовая бд\UnitEmployeeEdit.dfm=C:\Users\Blinov\Desktop\бд\курсовая бд\Unit2.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.399,=C:\Users\Blinov\Desktop\бд\курсовая бд\Unit2.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.210,C:\Users\Blinov\Desktop\бд\курсовая бд\Unit2.cpp=C:\Users\Blinov\Desktop\бд\курсовая бд\UnitEmployeeEdit.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.738,C:\Users\Blinov\Desktop\бд\курсовая бд\Unit2.cpp=C:\Users\Blinov\Desktop\бд\курсовая бд\edit.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.748,=C:\Users\PC\Desktop\бд\kyrs-bd\Unit3.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.811,C:\Users\Blinov\Documents\Embarcadero\Studio\Projects\Project1PCH1.h=C:\Users\Blinov\Desktop\бд\курсовая бд\Project1PCH1.h</Transaction>
     <Transaction>1899.12.30 00:00:00.000.257,=C:\Users\Blinov\Documents\Embarcadero\Studio\Projects\Project1PCH1.h</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.568,C:\Users\Blinov\Desktop\бд\курсовая бд\Unit1.h=C:\Users\Blinov\Documents\Embarcadero\Studio\Projects\Unit1.h</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.811,C:\Users\Blinov\Desktop\бд\курсовая бд\Project1PCH1.h=C:\Users\Blinov\Documents\Embarcadero\Studio\Projects\Project1PCH1.h</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.568,C:\Users\Blinov\Desktop\бд\курсовая бд\Unit1.dfm=C:\Users\Blinov\Documents\Embarcadero\Studio\Projects\Unit1.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.738,C:\Users\Blinov\Desktop\бд\курсовая бд\Unit2.dfm=C:\Users\Blinov\Desktop\бд\курсовая бд\edit.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.210,C:\Users\Blinov\Desktop\бд\курсовая бд\Unit2.dfm=C:\Users\Blinov\Desktop\бд\курсовая бд\UnitEmployeeEdit.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.805,C:\Users\PC\Desktop\бд\kyrs-bd\LoginForm.h=C:\Users\PC\Desktop\бд\kyrs-bd\Unit3.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.568,C:\Users\Blinov\Documents\Embarcadero\Studio\Projects\Unit1.dfm=C:\Users\Blinov\Desktop\бд\курсовая бд\Unit1.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.568,C:\Users\Blinov\Documents\Embarcadero\Studio\Projects\Unit1.h=C:\Users\Blinov\Desktop\бд\курсовая бд\Unit1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.805,C:\Users\PC\Desktop\бд\kyrs-bd\LoginForm.dfm=C:\Users\PC\Desktop\бд\kyrs-bd\Unit3.dfm</Transaction>
     <Transaction>1899.12.30 00:00:00.000.948,C:\Users\Blinov\Desktop\бд\курсовая бд\UnitEmployeeEdit.cpp=</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.210,C:\Users\Blinov\Desktop\бд\курсовая бд\UnitEmployeeEdit.cpp=C:\Users\Blinov\Desktop\бд\курсовая бд\Unit2.cpp</Transaction>
   </Transactions>
 </BorlandProject>

@@ -9,6 +9,9 @@
 #pragma package(smart_init)
 #pragma resource "*.dfm"
 #include "edit.h"
+
+#include "LoginForm.h"
+
 TForm1 *Form1;
 //---------------------------------------------------------------------------
 __fastcall TForm1::TForm1(TComponent* Owner)
@@ -302,3 +305,42 @@ void __fastcall TForm1::ExportToExcel(const String &FileName, const String &Shee
             L"Ошибка", MB_OK | MB_ICONERROR);
     }
 }
+
+
+void __fastcall TForm1::SetUserRole(String role, int employeeId)
+{
+    CurrentRole = role;
+
+
+	if (role == "admin") {
+		ButtonDelEmpl->Visible = true;
+		ButtonAddEml->Visible = true;
+		ButtonEditEmpl->Visible = true;
+	} else {
+		ButtonDelEmpl->Visible = false;
+		ButtonAddEml->Visible = false;
+        ButtonEditEmpl->Visible = false;
+    }
+}
+
+void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
+{
+    Application->Terminate();
+}
+void __fastcall TForm1::ButtonLogoutClickClick(TObject *Sender)
+{
+      if (Application->MessageBox(L"Выйти из аккаунта?", L"Выход", MB_YESNO | MB_ICONQUESTION) == mrYes)
+	{
+        CurrentRole = "";
+
+        this->Hide();
+
+		Form3->edtLogin->Clear();
+		Form3->edtPassword->Clear();
+		Form3->lblError->Caption = "";
+
+		Form3->Show();
+	}
+}
+//---------------------------------------------------------------------------
+

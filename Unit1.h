@@ -59,6 +59,7 @@ __published:	// IDE-managed Components
 	TButton *ButtonBrowse;
 	TSaveDialog *SaveDialog1;
 	TButton *ButtonReport;
+	TButton *ButtonLogoutClick;
 	void __fastcall ButtonDelEmplClick(TObject *Sender);
 	void __fastcall ButtonAcceptEmplClick(TObject *Sender);
 	void __fastcall ButtonAddEmlClick(TObject *Sender);
@@ -66,6 +67,9 @@ __published:	// IDE-managed Components
 	void __fastcall DBGrid2CellClick(TColumn *Column);
 	void __fastcall ButtonBrowseClick(TObject *Sender);
 	void __fastcall ButtonReportClick(TObject *Sender);
+    void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
+	void __fastcall ButtonLogoutClickClick(TObject *Sender);
+
 
 
 private:	// User declarations
@@ -74,6 +78,8 @@ void __fastcall ExportToExcel(const String &FileName, const String &SheetTitle, 
 public:		// User declarations
 	void LoadProjectInfo(int projectId);
 	__fastcall TForm1(TComponent* Owner);
+	void __fastcall SetUserRole(String role, int employeeId);
+    String CurrentRole;
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TForm1 *Form1;
