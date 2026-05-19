@@ -118,13 +118,7 @@ if (ADOTableProjecParticipation->IsEmpty()) return;
 
     ADOQuery1->Close();
     ADOQuery1->SQL->Text =
-        "SELECT p.name, p.start_date, p.end_date, "
-        "e.last_name, e.firtst_name, r.name as role_name "
-        "FROM Projects p "
-		"LEFT JOIN Project_Participation pp ON pp.project_id = p.id "
-		"LEFT JOIN Employees e ON e.id = pp.employee_id "
-		"LEFT JOIN Roles r ON r.id = pp.role_id "
-        "WHERE p.id = " + IntToStr(projectID);
+		"SELECT p.name, p.start_date, p.end_date, e.last_name, e.firtst_name, r.name as role_name FROM Projects p LEFT JOIN Project_Participation pp ON pp.project_id = p.id LEFT JOIN Employees e ON e.id = pp.employee_id LEFT JOIN Roles r ON r.id = pp.role_id WHERE p.id = " + IntToStr(projectID);
     ADOQuery1->Open();
 
     if (!ADOQuery1->IsEmpty())
@@ -172,46 +166,22 @@ void __fastcall TForm1::ButtonReportClick(TObject *Sender)
     }
     if (EditPath->Text.IsEmpty()) {
         ShowMessage("Укажите путь для сохранения");
-        return;
-    }
+		return;
+	}
 
-    String selected = ComboBoxTable->Text;
-    String sql = "";
-    String title = "";
+	String selected = ComboBoxTable->Text;
+	String sql = "";
+	String title = "";
 
 	if (selected == "Employees") {
 		title = "Сотрудники";
 		sql =
-			"SELECT "
-			"  e.id, "
-			"  e.last_name AS LastName, "
-			"  e.firtst_name AS FirstName, "
-			"  e.middle_name AS MiddleName, "
-			"  e.birth_date AS BirthDate, "
-			"  COALESCE(d.name, '-') AS Department, "
-			"  COALESCE(p.title, '-') AS Position, "
-			"  COALESCE(CAST(p.salary AS CHAR), '-') AS Salary, "
-			"  COALESCE(CONCAT(a.city, ', ', a.street, ', ', a.house), '-') AS Address "
-			"FROM laba16.Employees e "
-			"LEFT JOIN laba16.Departmens d ON e.department_id = d.id "
-			"LEFT JOIN laba16.Positions p ON e.position_id = p.id "
-			"LEFT JOIN laba16.Addreses a ON e.address_id = a.id";
+			"SELECT e.id, e.last_name AS LastName,e.firtst_name AS FirstName, e.middle_name AS MiddleName, e.birth_date AS BirthDate,  COALESCE(d.name, '-') AS Department, COALESCE(p.title, '-') AS Position, COALESCE(CAST(p.salary AS CHAR), '-') AS Salary, COALESCE(CONCAT(a.city, ', ', a.street, ', ', a.house), '-') AS Address FROM laba16.Employees e LEFT JOIN Departmens d ON e.department_id = d.id LEFT JOIN Positions p ON e.position_id = p.id LEFT JOIN Addreses a ON e.address_id = a.id";
 	}
 	else if (selected == "Project_Participation") {
 		title = "Участие в проектах";
 		sql =
-			"SELECT "
-			"  COALESCE(CONCAT(e.last_name, ' ', e.firtst_name, ' ', e.middle_name), "
-			"           CONCAT(e.last_name, ' ', e.firtst_name), "
-			"           e.last_name, '-') AS Employee, "
-			"  COALESCE(pr.name, '-') AS Project, "
-			"  COALESCE(r.name, '-') AS Role, "
-			"  COALESCE(r.task, '-') AS Task, "
-			"  pp.deadline AS Deadline "
-			"FROM laba16.Project_Participation pp "
-			"LEFT JOIN laba16.Employees e ON pp.employee_id = e.id "
-			"LEFT JOIN laba16.Projects pr ON pp.project_id = pr.id "
-			"LEFT JOIN laba16.Roles r ON pp.role_id = r.id";
+			"SELECT  COALESCE(CONCAT(e.last_name, ' ', e.firtst_name, ' ', e.middle_name),  CONCAT(e.last_name, ' ', e.firtst_name), e.last_name, '-') AS Employee, COALESCE(pr.name, '-') AS Project, COALESCE(r.name, '-') AS Role, COALESCE(r.task, '-') AS Task, pp.deadline AS Deadline FROM Project_Participation pp LEFT JOIN Employees e ON pp.employee_id = e.id LEFT JOIN Projects pr ON pp.project_id = pr.id LEFT JOIN Roles r ON pp.role_id = r.id";
 	}
 
     ExportToExcel(EditPath->Text, title, sql);
