@@ -166,7 +166,7 @@ void __fastcall TForm1::ButtonBrowseClick(TObject *Sender)
 
 void __fastcall TForm1::ButtonReportClick(TObject *Sender)
 {
-	if (ComboBoxTable->ItemIndex < 0) {
+    if (ComboBoxTable->ItemIndex < 0) {
         ShowMessage("Выберите таблицу для отчёта");
         return;
     }
@@ -176,22 +176,74 @@ void __fastcall TForm1::ButtonReportClick(TObject *Sender)
     }
 
     String selected = ComboBoxTable->Text;
+    String sql = "";
+    String title = "";
 
-    if (selected == "Employees")
-        ExportToExcel(ADOTableEmpl, EditPath->Text, "Сотрудники");
-    else if (selected == "Project_Participation")
-        ExportToExcel(ADOTableProjecParticipation, EditPath->Text, "Участие в проектах");
+	if (selected == "Employees") {
+		title = "Сотрудники";
+		sql =
+			"SELECT "
+			"  e.id, "
+			"  e.last_name AS LastName, "
+			"  e.firtst_name AS FirstName, "
+			"  e.middle_name AS MiddleName, "
+			"  e.birth_date AS BirthDate, "
+			"  COALESCE(d.name, '-') AS Department, "
+			"  COALESCE(p.title, '-') AS Position, "
+			"  COALESCE(CAST(p.salary AS CHAR), '-') AS Salary, "
+			"  COALESCE(CONCAT(a.city, ', ', a.street, ', ', a.house), '-') AS Address "
+			"FROM laba16.Employees e "
+			"LEFT JOIN laba16.Departmens d ON e.department_id = d.id "
+			"LEFT JOIN laba16.Positions p ON e.position_id = p.id "
+			"LEFT JOIN laba16.Addreses a ON e.address_id = a.id";
+	}
+	else if (selected == "Project_Participation") {
+		title = "Участие в проектах";
+		sql =
+			"SELECT "
+			"  COALESCE(CONCAT(e.last_name, ' ', e.firtst_name, ' ', e.middle_name), "
+			"           CONCAT(e.last_name, ' ', e.firtst_name), "
+			"           e.last_name, '-') AS Employee, "
+			"  COALESCE(pr.name, '-') AS Project, "
+			"  COALESCE(r.name, '-') AS Role, "
+			"  COALESCE(r.task, '-') AS Task, "
+			"  pp.deadline AS Deadline "
+			"FROM laba16.Project_Participation pp "
+			"LEFT JOIN laba16.Employees e ON pp.employee_id = e.id "
+			"LEFT JOIN laba16.Projects pr ON pp.project_id = pr.id "
+			"LEFT JOIN laba16.Roles r ON pp.role_id = r.id";
+	}
+
+    ExportToExcel(EditPath->Text, title, sql);
 }
+
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::ExportToExcel(TADOTable *Table, const String &FileName, const String &SheetTitle)
+void __fastcall TForm1::ExportToExcel(const String &FileName, const String &SheetTitle, const String &SQL)
 {
-    Variant Excel, Workbook, Sheet, Cell;
 
+    TStringList *headers = new TStringList();
+	headers->Values["id"] = "ID";
+	headers->Values["LastName"] = "Фамилия";
+	headers->Values["FirstName"] = "Имя";
+	headers->Values["MiddleName"] = "Отчество";
+	headers->Values["BirthDate"] = "Дата рождения";
+	headers->Values["Department"] = "Отдел";
+	headers->Values["Position"] = "Должность";
+	headers->Values["Salary"] = "Оклад";
+	headers->Values["Address"] = "Адрес";
+	headers->Values["Employee"] = "Сотрудник";
+	headers->Values["Project"] = "Проект";
+	headers->Values["StartDate"] = "Начало проекта";
+	headers->Values["EndDate"] = "Конец проекта";
+	headers->Values["Role"] = "Роль";
+	headers->Values["Task"] = "Задача";
+	headers->Values["Deadline"] = "Дедлайн";
+
+    Variant Excel, Workbook, Sheet, Cell;
     String fullPath = FileName;
     if (ExtractFileExt(fullPath).LowerCase() != ".xlsx")
-		fullPath += ".xlsx";
-
+        fullPath += ".xlsx";
     if (FileExists(fullPath))
         DeleteFile(fullPath);
 
@@ -199,48 +251,55 @@ void __fastcall TForm1::ExportToExcel(TADOTable *Table, const String &FileName, 
         Excel = Variant::CreateObject("Excel.Application");
     }
     catch (...) {
-        ShowMessage("Excel не установлен!");
+        MessageBoxW(Handle, L"Excel не установлен!", L"Ошибка", MB_OK | MB_ICONERROR);
+        delete headers;
         return;
     }
 
-	Excel.OlePropertySet("Visible", false);
-	Excel.OlePropertySet("DisplayAlerts", false);
+    Excel.OlePropertySet("Visible", false);
+    Excel.OlePropertySet("DisplayAlerts", false);
+
+    ADOQuery1->Close();
+    ADOQuery1->SQL->Clear();
+    ADOQuery1->SQL->Add(SQL);
+    ADOQuery1->Open();
 
     try {
         Workbook = Excel.OlePropertyGet("Workbooks").OleFunction("Add");
         Sheet = Workbook.OlePropertyGet("Worksheets", 1);
-		Sheet.OlePropertySet("Name", WideString(SheetTitle));
+        Sheet.OlePropertySet("Name", WideString(SheetTitle));
 
         Sheet.OlePropertyGet("Cells", 1, 1).OlePropertySet("Value",
             WideString("Отчёт: " + SheetTitle));
         Sheet.OlePropertyGet("Cells", 1, 1).OlePropertyGet("Font").OlePropertySet("Bold", true);
         Sheet.OlePropertyGet("Cells", 1, 1).OlePropertyGet("Font").OlePropertySet("Size", 14);
-
         Sheet.OlePropertyGet("Cells", 2, 1).OlePropertySet("Value",
             WideString("Дата: " + DateToStr(Date())));
 
-        if (!Table->Active) Table->Open();
-        Table->First();
-
+        ADOQuery1->First();
         int startRow = 4;
 
-        for (int i = 0; i < Table->FieldCount; i++) {
+        for (int i = 0; i < ADOQuery1->FieldCount; i++) {
+            String fieldName = ADOQuery1->Fields->Fields[i]->FieldName;
+			String caption = headers->Values[fieldName];
+			if (caption.IsEmpty()) caption = fieldName;
+
             Cell = Sheet.OlePropertyGet("Cells", startRow, i + 1);
-            Cell.OlePropertySet("Value", WideString(Table->Fields->Fields[i]->FieldName));
+            Cell.OlePropertySet("Value", WideString(caption));
             Cell.OlePropertyGet("Font").OlePropertySet("Bold", true);
             Cell.OlePropertyGet("Interior").OlePropertySet("Color", (int)0x00CCCCCC);
             Cell.OlePropertyGet("Borders").OlePropertySet("LineStyle", 1);
-        }
+		}
 
         int row = startRow + 1;
-        while (!Table->Eof) {
-            for (int i = 0; i < Table->FieldCount; i++) {
+        while (!ADOQuery1->Eof) {
+            for (int i = 0; i < ADOQuery1->FieldCount; i++) {
                 Cell = Sheet.OlePropertyGet("Cells", row, i + 1);
-                Cell.OlePropertySet("Value", WideString(Table->Fields->Fields[i]->AsString));
+                Cell.OlePropertySet("Value", WideString(ADOQuery1->Fields->Fields[i]->AsString));
                 Cell.OlePropertyGet("Borders").OlePropertySet("LineStyle", 1);
             }
             row++;
-            Table->Next();
+            ADOQuery1->Next();
         }
 
         Cell = Sheet.OlePropertyGet("Cells", row + 1, 1);
@@ -248,21 +307,28 @@ void __fastcall TForm1::ExportToExcel(TADOTable *Table, const String &FileName, 
         Cell.OlePropertyGet("Font").OlePropertySet("Bold", true);
 
         Sheet.OlePropertyGet("Columns").OleFunction("AutoFit");
-
         Workbook.OleProcedure("SaveAs", WideString(fullPath), 51);
         Workbook.OleProcedure("Close", false);
         Excel.OleProcedure("Quit");
 
+        ADOQuery1->Close();
+        delete headers;
+
         if (FileExists(fullPath))
-            ShowMessage("Отчёт успешно создан:\n" + fullPath);
+            MessageBoxW(Handle, WideString("Отчёт успешно создан:\n" + fullPath).c_bstr(),
+                L"Успех", MB_OK | MB_ICONINFORMATION);
         else
-            ShowMessage("Файл не создан! Проверьте путь:\n" + fullPath);
+            MessageBoxW(Handle, WideString("Файл не создан! Проверьте путь:\n" + fullPath).c_bstr(),
+                L"Ошибка", MB_OK | MB_ICONWARNING);
     }
     catch (Exception &E) {
         try {
             Excel.OlePropertySet("DisplayAlerts", false);
             Excel.OleProcedure("Quit");
         } catch (...) {}
-        ShowMessage("Ошибка при создании отчёта:\n" + E.Message);
+        ADOQuery1->Close();
+        delete headers;
+        MessageBoxW(Handle, WideString("Ошибка при создании отчёта:\n" + E.Message).c_bstr(),
+            L"Ошибка", MB_OK | MB_ICONERROR);
     }
 }

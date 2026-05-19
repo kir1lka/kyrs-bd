@@ -410,6 +410,8 @@ object Form1: TForm1
         ParentShowHint = False
         ShowHint = True
         TabOrder = 1
+        ExplicitTop = 387
+        ExplicitWidth = 806
         object ButtonAddEml: TButton
           Left = 2
           Top = 2
@@ -449,6 +451,7 @@ object Form1: TForm1
           Caption = #1055#1088#1080#1084#1077#1085#1080#1090#1100' '#1085#1072#1089#1090#1088#1086#1081#1082#1080
           TabOrder = 3
           OnClick = ButtonAcceptEmplClick
+          ExplicitLeft = 641
         end
       end
       object Panel2: TPanel
@@ -458,6 +461,7 @@ object Form1: TForm1
         Height = 97
         Align = alTop
         TabOrder = 2
+        ExplicitWidth = 806
         object GroupBox1: TGroupBox
           Left = 1
           Top = 1
@@ -469,6 +473,7 @@ object Form1: TForm1
           ParentBackground = False
           ParentColor = False
           TabOrder = 0
+          ExplicitWidth = 804
           DesignSize = (
             810
             95)
@@ -601,8 +606,6 @@ object Form1: TForm1
         Color = clMoneyGreen
         ParentBackground = False
         TabOrder = 1
-        ExplicitWidth = 806
-        ExplicitHeight = 296
         object ImageProject: TImage
           Left = 2
           Top = 6

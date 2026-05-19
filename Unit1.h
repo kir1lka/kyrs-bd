@@ -70,9 +70,9 @@ __published:	// IDE-managed Components
 
 private:	// User declarations
 String BasePath;
-void __fastcall ExportToExcel(TADOTable *Table, const String &FileName, const String &SheetTitle);
+void __fastcall ExportToExcel(const String &FileName, const String &SheetTitle, const String &SQL);
 public:		// User declarations
-    void LoadProjectInfo(int projectId);
+	void LoadProjectInfo(int projectId);
 	__fastcall TForm1(TComponent* Owner);
 };
 //---------------------------------------------------------------------------
