@@ -365,8 +365,8 @@ object Form3: TForm3
   end
   object qryLogin: TADOQuery
     ConnectionString = 
-      'Provider=MSDASQL.1;Persist Security Info=False;Data Source=laba1' +
-      '6'
+      'Provider=MSDASQL.1;Persist Security Info=False;Data Source=kyrs-' +
+      'bd'
     Parameters = <>
     Left = 480
     Top = 328

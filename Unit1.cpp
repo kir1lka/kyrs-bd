@@ -115,13 +115,18 @@ void __fastcall TForm1::ButtonEditEmplClick(TObject *Sender)
 
 void __fastcall TForm1::DBGrid2CellClick(TColumn *Column)
 {
-if (ADOTableProjecParticipation->IsEmpty()) return;
+    if (ADOTableProjecParticipation->IsEmpty()) return;
 
     int projectID = ADOTableProjecParticipation->FieldByName("project_id")->AsInteger;
 
     ADOQuery1->Close();
     ADOQuery1->SQL->Text =
-		"SELECT p.name, p.start_date, p.end_date, e.last_name, e.firtst_name, r.name as role_name FROM Projects p LEFT JOIN Project_Participation pp ON pp.project_id = p.id LEFT JOIN Employees e ON e.id = pp.employee_id LEFT JOIN Roles r ON r.id = pp.role_id WHERE p.id = " + IntToStr(projectID);
+        "SELECT p.name, p.start_date, p.end_date, p.image_path, e.last_name, e.firtst_name, r.name as role_name "
+        "FROM Projects p "
+        "LEFT JOIN Project_Participation pp ON pp.project_id = p.id "
+        "LEFT JOIN Employees e ON e.id = pp.employee_id "
+        "LEFT JOIN Roles r ON r.id = pp.role_id "
+        "WHERE p.id = " + IntToStr(projectID);
     ADOQuery1->Open();
 
     if (!ADOQuery1->IsEmpty())
@@ -129,11 +134,11 @@ if (ADOTableProjecParticipation->IsEmpty()) return;
         LabelName->Caption = "Название: " + ADOQuery1->FieldByName("name")->AsString;
         LabelDate->Caption = "Дедлайн: " + ADOQuery1->FieldByName("end_date")->AsString;
 
-       String imgPath = BasePath + ADOTableProjecParticipation->FieldByName("image_path")->AsString;
-		if (FileExists(imgPath))
-			ImageProject->Picture->LoadFromFile(imgPath);
-		else
-			ImageProject->Picture = NULL;
+        String imgPath = BasePath + ADOQuery1->FieldByName("image_path")->AsString;
+        if (FileExists(imgPath))
+            ImageProject->Picture->LoadFromFile(imgPath);
+        else
+            ImageProject->Picture = NULL;
 
         String sWorkers = "";
         ADOQuery1->First();
@@ -141,12 +146,12 @@ if (ADOTableProjecParticipation->IsEmpty()) return;
         {
             sWorkers = sWorkers +
                 ADOQuery1->FieldByName("last_name")->AsString + " " +
-				ADOQuery1->FieldByName("firtst_name")->AsString + " - " +
-				ADOQuery1->FieldByName("role_name")->AsString + "\r\n";
+                ADOQuery1->FieldByName("firtst_name")->AsString + " - " +
+                ADOQuery1->FieldByName("role_name")->AsString + "\r\n";
             ADOQuery1->Next();
         }
         MemoWorkers->Lines->Text = sWorkers;
-	}
+    }
 }
 //---------------------------------------------------------------------------
 
@@ -179,15 +184,15 @@ void __fastcall TForm1::ButtonReportClick(TObject *Sender)
 	if (selected == "Employees") {
 		title = "Сотрудники";
 		sql =
-			"SELECT e.id, e.last_name AS LastName,e.firtst_name AS FirstName, e.middle_name AS MiddleName, e.birth_date AS BirthDate,  COALESCE(d.name, '-') AS Department, COALESCE(p.title, '-') AS Position, COALESCE(CAST(p.salary AS CHAR), '-') AS Salary, COALESCE(CONCAT(a.city, ', ', a.street, ', ', a.house), '-') AS Address FROM laba16.Employees e LEFT JOIN Departmens d ON e.department_id = d.id LEFT JOIN Positions p ON e.position_id = p.id LEFT JOIN Addreses a ON e.address_id = a.id";
+			"SELECT e.id, e.last_name AS LastName,e.firtst_name AS FirstName, e.middle_name AS MiddleName, e.birth_date AS BirthDate,  COALESCE(d.name, '-') AS Department, COALESCE(p.title, '-') AS Position, COALESCE(CAST(p.salary AS CHAR), '-') AS Salary, COALESCE(CONCAT(a.city, ', ', a.street, ', ', a.house), '-') AS Address FROM Employees e LEFT JOIN Departmens d ON e.department_id = d.id LEFT JOIN Positions p ON e.position_id = p.id LEFT JOIN Addreses a ON e.address_id = a.id";
 	}
 	else if (selected == "Project_Participation") {
-		title = "Участие в проектах";
-		sql =
-			"SELECT  COALESCE(CONCAT(e.last_name, ' ', e.firtst_name, ' ', e.middle_name),  CONCAT(e.last_name, ' ', e.firtst_name), e.last_name, '-') AS Employee, COALESCE(pr.name, '-') AS Project, COALESCE(r.name, '-') AS Role, COALESCE(r.task, '-') AS Task, pp.deadline AS Deadline FROM Project_Participation pp LEFT JOIN Employees e ON pp.employee_id = e.id LEFT JOIN Projects pr ON pp.project_id = pr.id LEFT JOIN Roles r ON pp.role_id = r.id";
-	}
+    title = "Участие в проектах";
+	sql =
+		"SELECT COALESCE(CONCAT(e.last_name, ' ', e.firtst_name, ' ', e.middle_name), CONCAT(e.last_name, ' ', e.firtst_name), e.last_name, '-') AS Employee, COALESCE(pr.name, '-') AS Project, COALESCE(r.name, '-') AS Role, COALESCE(r.task, '-') AS Task, pr.end_date AS Deadline FROM Project_Participation pp LEFT JOIN Employees e ON pp.employee_id = e.id LEFT JOIN Projects pr ON pp.project_id = pr.id LEFT JOIN Roles r ON pp.role_id = r.id";
+}
 
-    ExportToExcel(EditPath->Text, title, sql);
+	ExportToExcel(EditPath->Text, title, sql);
 }
 
 //---------------------------------------------------------------------------

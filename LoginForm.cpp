@@ -37,9 +37,7 @@ void __fastcall TForm3::btnLoginClick(TObject *Sender)
 		qryLogin->Close();
         qryLogin->SQL->Clear();
 		qryLogin->SQL->Add(
-            "SELECT id, role, employee_id, is_active "
-            "FROM laba16.Users "
-            "WHERE username = :uname AND password = :upass"
+            "SELECT id, role, employee_id, is_active FROM Users WHERE username = :uname AND password = :upass"
         );
         qryLogin->Parameters->ParamByName("uname")->Value = login;
         qryLogin->Parameters->ParamByName("upass")->Value = password;

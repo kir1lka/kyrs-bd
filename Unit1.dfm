@@ -325,6 +325,8 @@ object Form1: TForm1
     ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
+    ExplicitWidth = 814
+    ExplicitHeight = 463
     object TabSheet1: TTabSheet
       Caption = #1057#1086#1090#1088#1091#1076#1085#1080#1082#1080
       object DBGrid1: TDBGrid
@@ -408,6 +410,8 @@ object Form1: TForm1
         ParentShowHint = False
         ShowHint = True
         TabOrder = 1
+        ExplicitTop = 387
+        ExplicitWidth = 806
         object ButtonAddEml: TButton
           Left = 2
           Top = 2
@@ -447,6 +451,7 @@ object Form1: TForm1
           Caption = #1055#1088#1080#1084#1077#1085#1080#1090#1100' '#1085#1072#1089#1090#1088#1086#1081#1082#1080
           TabOrder = 3
           OnClick = ButtonAcceptEmplClick
+          ExplicitLeft = 641
         end
       end
       object Panel2: TPanel
@@ -456,6 +461,7 @@ object Form1: TForm1
         Height = 97
         Align = alTop
         TabOrder = 2
+        ExplicitWidth = 806
         object GroupBox1: TGroupBox
           Left = 1
           Top = 1
@@ -467,28 +473,27 @@ object Form1: TForm1
           ParentBackground = False
           ParentColor = False
           TabOrder = 0
+          ExplicitWidth = 804
           DesignSize = (
             810
             95)
           object Label1: TLabel
-            Left = 435
+            Left = 448
             Top = 24
             Width = 67
             Height = 15
             Alignment = taCenter
             Anchors = [akRight]
             Caption = #1060#1080#1083#1100#1090#1088#1072#1094#1080#1103
-            ExplicitLeft = 448
           end
           object Label2: TLabel
-            Left = 57
+            Left = 70
             Top = 24
             Width = 66
             Height = 15
             Alignment = taCenter
             Anchors = [akRight]
             Caption = #1057#1086#1088#1090#1080#1088#1086#1074#1082#1072
-            ExplicitLeft = 70
           end
           object ComboBoxSortField: TComboBox
             Left = 70
@@ -567,28 +572,6 @@ object Form1: TForm1
         TitleFont.Name = 'Segoe UI'
         TitleFont.Style = []
         OnCellClick = DBGrid2CellClick
-        Columns = <
-          item
-            Expanded = False
-            FieldName = 'employee_id'
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'project_id'
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'role_id'
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'image_path'
-            Width = 300
-            Visible = True
-          end>
       end
       object Panel4: TPanel
         Left = 0
@@ -725,8 +708,8 @@ object Form1: TForm1
   object ADOTableEmpl: TADOTable
     Active = True
     ConnectionString = 
-      'Provider=MSDASQL.1;Persist Security Info=False;Data Source=laba1' +
-      '6'
+      'Provider=MSDASQL.1;Persist Security Info=False;Data Source=kyrs-' +
+      'bd'
     CursorType = ctStatic
     TableName = 'Employees'
     Left = 44
@@ -745,8 +728,8 @@ object Form1: TForm1
   object ADOTableProjecParticipation: TADOTable
     Active = True
     ConnectionString = 
-      'Provider=MSDASQL.1;Persist Security Info=False;Data Source=laba1' +
-      '6'
+      'Provider=MSDASQL.1;Persist Security Info=False;Data Source=kyrs-' +
+      'bd'
     CursorType = ctStatic
     TableName = 'Project_Participation'
     Left = 180
@@ -754,8 +737,8 @@ object Form1: TForm1
   end
   object ADOQuery1: TADOQuery
     ConnectionString = 
-      'Provider=MSDASQL.1;Persist Security Info=False;Data Source=laba1' +
-      '6'
+      'Provider=MSDASQL.1;Persist Security Info=False;Data Source=kyrs-' +
+      'bd'
     Parameters = <>
     Left = 348
     Top = 291
